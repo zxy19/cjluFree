@@ -1,4 +1,4 @@
-package moe.kooritea.debugwebview;
+package cc.xypp.autoSig;
 
 import org.junit.Test;
 

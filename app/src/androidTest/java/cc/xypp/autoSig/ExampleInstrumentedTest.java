@@ -1,4 +1,4 @@
-package moe.kooritea.debugwebview;
+package cc.xypp.autoSig;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("moe.kooritea.debugwebview", appContext.getPackageName());
+        assertEquals("cc.xypp.autoSig", appContext.getPackageName());
     }
 }
