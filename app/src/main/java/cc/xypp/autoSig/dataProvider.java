@@ -48,6 +48,7 @@ public class dataProvider extends ContentProvider {
         db = mDbHelper.getWritableDatabase();
         initVal("auto","false");
         initVal("inj","false");
+        initVal("once","false");
         return true;
     }
     public void initVal(String name,String val) {

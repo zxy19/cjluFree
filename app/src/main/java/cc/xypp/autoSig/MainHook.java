@@ -10,6 +10,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -24,25 +25,28 @@ public class MainHook implements IXposedHookLoadPackage {
     private dataUtil data;
     private HashSet<String> classNameSet = new HashSet<>();
     private Class<?> JWClazz;
+    private Context acontext;
+    private boolean actvd=false;
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        Log.w("XPDE", "PKG:"+lpparam.packageName);
         if(!lpparam.packageName.equals("com.tencent.wework"))return;
         if(lpparam.isFirstApplication){
-            Log.w("XPDET", "A");
             if(hookCheck(lpparam.packageName)){
                 try{
-                    Log.w("XPDET", "A");
+                    Log.w("XPDET-BS1", "A");
                     this.hookSystemWebView(lpparam);
+                    Log.w("XPDET-BS2", "B");
                     this.hookAutomation(lpparam);
                 }catch (Exception e){
-                    Log.w("XPDET", e.toString());
+                    Log.w("XPDET-INITERR", e.toString()+"|"+ Arrays.toString(e.getStackTrace()));
                 }
             }
         }
     }
 
-    private void hookAutomation(XC_LoadPackage.LoadPackageParam lpparam) {
+    private void hookAutomation(final XC_LoadPackage.LoadPackageParam lpparam) {
         try {
+            actvd=false;
+            JWClazz=null;
             Log.w("XPDET", "@@");
             Class<?> ContextClass = XposedHelpers.findClass("android.content.ContextWrapper", lpparam.classLoader);
             XposedHelpers.findAndHookMethod(ContextClass, "getApplicationContext", new XC_MethodHook() {
@@ -52,11 +56,14 @@ public class MainHook implements IXposedHookLoadPackage {
                     if(data!=null)return;
                     try{
                         Context applicationContext = (Context) param.getResult();
+                        if(applicationContext==null)return;
                         Log.w("XPDET","((-"+applicationContext.toString());
+                        acontext = applicationContext;
                         ContentResolver rsv = applicationContext.getContentResolver();
+                        if(rsv==null)return;
                         Log.w("XPDET","<<-"+rsv.toString());
                         data=new dataUtil(rsv);
-                        Log.w("XPDET", data.get("auto")+"-"+data.get("inj"));
+                        Log.w("XPDET", data.get("auto")+"-"+data.get("inj")+"-"+data.get("once"));
                     }catch (Exception e){
                         Log.w("XPDET", e.toString());
                     }
@@ -66,6 +73,13 @@ public class MainHook implements IXposedHookLoadPackage {
         } catch (Throwable t) {
             Log.w("XPDET", t.toString());
         }
+        try{
+            JWClazz=XposedHelpers.findClass("com.tencent.wework.launch.WwMainActivity",lpparam.classLoader);
+            if(JWClazz!=null){
+                Log.w("XPDET", "A-Fnd");
+                openWeb();
+            }
+        }catch (Exception ignore){};
         try {
             XposedHelpers.findAndHookMethod(
                     ClassLoader.class,
@@ -75,34 +89,68 @@ public class MainHook implements IXposedHookLoadPackage {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             super.afterHookedMethod(param);
-                            Class<?> clazz = (Class<?>) param.getResult();
-                            if (clazz.getName().contains("com.tencent.wework.common.web.JsWebLauncher")) {
-                                try {
+                            try {
+                                Class<?> clazz = (Class<?>) param.getResult();
+                                if(clazz==null)return;
+                                String name=clazz.getName();
+                                Log.w("XPDE", "NAME:"+name);
+                                if (name.contains("com.tencent.wework.common.web.JsWebLauncher")) {
                                     Log.w("XPDET", "A-Fnd");
                                     JWClazz = clazz;
-                                } catch (Exception ignored) { };
-                            }
-
-                            else if (clazz.getName().contains("com.tencent.wework.launch.WwMainActivity")) {
-                                XposedHelpers.findAndHookMethod(clazz, "onStart", new XC_MethodHook() {
-                                    @Override
-                                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                        super.afterHookedMethod(param);
-                                        if (data == null || JWClazz == null) return;
-                                        if (!data.get("auto").equals("true") || data.get("once").equals("true"))
-                                            return;
-                                        Log.w("XPDET", "A-RES");
-                                        final Context ctx = AndroidAppHelper.currentApplication();
-                                        XposedHelpers.callStaticMethod(JWClazz, "N", ctx, "健康打卡-自动化", "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da\n");
-                                        Log.w("XPDET", "A-Called");
-                                        data.set("once", "false");
-                                    }
-                                });
-                            }
+                                    Log.w("XPDET", "A-RES");
+                                    /*if(acontext==null)
+                                        acontext = AndroidAppHelper.currentApplication();
+                                    XposedHelpers.callStaticMethod(clazz, "N", acontext, "健康打卡-自动化", "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da\n");
+                                    Log.w("XPDET", "A-Called");
+                                    data.set("once", "false");*/
+                                    //    if(actvd)
+                                        openWeb();
+                                } else if (name.contains("com.tencent.wework.msg.controller.MessageListFragment")) {
+                                    XposedHelpers.findAndHookConstructor(name, lpparam.classLoader, new XC_MethodHook() {
+                                        @Override
+                                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                            super.beforeHookedMethod(param);
+                                            if(JWClazz!=null)return;
+                                            Log.w("XPDET", "A-OW");
+                                            XposedHelpers.callMethod(param.thisObject,"cu",101,"data:text/plain;base64,562J5b6F5rOo5YWl56iL5bqP5bel5L2c");
+                                        }
+                                    });
+                                } else if (name.contains("com.tencent.wework.launch.WwMainActivity")) {
+                                    XposedHelpers.findAndHookMethod(clazz, "onStart", new XC_MethodHook() {
+                                        @Override
+                                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                            super.afterHookedMethod(param);
+                                            Log.w("XPDET", "A-ENT");
+                                            actvd=true;
+                                            if (data == null || JWClazz == null) return;
+                                            if (!data.get("auto").equals("true") && !data.get("once").equals("true"))
+                                                return;
+                                            actvd=false;
+                                            openWeb();
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                Log.w("XPDET", "ER@"+e.toString());
+                            };
                         }
                     });
         }catch (Exception e){
             Log.w("XPDET","EE@"+e.toString());
+        }
+    }
+
+    private void openWeb() {
+        try {
+            Log.w("XPDET", "A-RES");
+            if(acontext==null)
+            acontext = AndroidAppHelper.currentApplication();
+            Log.w("XPDET", "A-");
+            XposedHelpers.callStaticMethod(JWClazz, "N", null, "健康打卡-自动化", "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da\n");
+            Log.w("XPDET", "A-Called");
+            data.set("once", "false");
+        }catch (Exception e){
+            Log.w("XPDET@AE", e.toString());
         }
     }
 
