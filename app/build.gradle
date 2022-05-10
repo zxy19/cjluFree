@@ -7,8 +7,8 @@ android {
         applicationId "cc.xypp.cjluFree"
         minSdkVersion 26
         targetSdkVersion 32
-        versionCode 4
-        versionName "Beta 1.0.0"
+        versionCode 5
+        versionName "Beta 1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
