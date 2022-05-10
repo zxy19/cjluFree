@@ -1,4 +1,4 @@
-package cc.xypp.autoSig;
+package cc.xypp.cjluFree;
 
 import org.junit.Test;
 

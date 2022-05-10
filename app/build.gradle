@@ -4,11 +4,11 @@ android {
     compileSdkVersion 32
 
     defaultConfig {
-        applicationId "cc.xypp.autoSig"
-        minSdkVersion 22
+        applicationId "cc.xypp.cjluFree"
+        minSdkVersion 26
         targetSdkVersion 32
-        versionCode 2
-        versionName "0.0.2"
+        versionCode 4
+        versionName "Beta 1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

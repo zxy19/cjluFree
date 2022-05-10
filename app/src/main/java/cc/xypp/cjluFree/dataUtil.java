@@ -1,4 +1,4 @@
-package cc.xypp.autoSig;
+package cc.xypp.cjluFree;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -9,7 +9,7 @@ public class dataUtil {
     Uri uri;
     ContentResolver resolver;
     dataUtil(ContentResolver _resolver){
-        uri = Uri.parse("content://cc.xypp.autoSig.dataProvider/data");
+        uri = Uri.parse("content://cc.xypp.cjluFree.dataProvider/data");
         resolver=_resolver;
     }
 

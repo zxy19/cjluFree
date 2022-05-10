@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cc.xypp.autoSig">
+    package="cc.xypp.cjluFree">
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -9,27 +9,30 @@
         android:theme="@style/AppTheme"
         >
         <activity
-            android:name="cc.xypp.autoSig.MainActivity"
+            android:name="cc.xypp.cjluFree.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="cc.xypp.cjluFree.sig" />
+                <action android:name="cc.xypp.cjluFree.pass" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity>
+        <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
 
         <meta-data
             android:name="xposedmodule"
-            android:value="debugwebview" />
+            android:value="cjluFree" />
         <meta-data
             android:name="xposeddescription"
-            android:value="强制WebView调试和注入vConsole" />
+            android:value="中国计量大学-自动打卡和打开健康码" />
         <meta-data
             android:name="xposedminversion"
             android:value="53" />
         <provider
             android:name="dataProvider"
-            android:authorities="cc.xypp.autoSig.dataProvider"
+            android:authorities="cc.xypp.cjluFree.dataProvider"
             android:enabled="true"
             android:exported="true" />
 

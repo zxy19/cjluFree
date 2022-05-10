@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">JS INJECTOR</string>
+    <string name="app_name">自由量大</string>
+
+    <string name="sig_s">打卡</string>
+    <string name="sig_n">量大健康打卡</string>
+    <string name="sig_b">--</string>
+    <string name="sig">sign</string>
+    <string name="pass_s">通行码</string>
+    <string name="pass_n">量大通行码</string>
+    <string name="pass_b">--</string>
+    <string name="pass">pass</string>
 </resources>

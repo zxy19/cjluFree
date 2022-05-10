@@ -1,0 +1,32 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="pass"
+        android:enabled="true"
+        android:icon="@mipmap/ic_pass"
+        android:shortcutShortLabel="@string/pass_s"
+        android:shortcutLongLabel="@string/pass_n"
+        android:shortcutDisabledMessage="@string/pass_b">
+        <intent
+            android:action="cc.xypp.cjluFree.pass"
+            android:targetPackage="cc.xypp.cjluFree"
+            android:targetClass="cc.xypp.cjluFree.MainActivity"
+            />
+        <categories android:name="android.intent.category.LAUNCHER" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="sig"
+        android:enabled="true"
+        android:icon="@mipmap/ic_sig"
+        android:shortcutShortLabel="@string/sig_s"
+        android:shortcutLongLabel="@string/sig_n"
+        android:shortcutDisabledMessage="@string/sig_b">
+        <intent
+            android:action="cc.xypp.cjluFree.sig"
+            android:targetPackage="cc.xypp.cjluFree"
+            android:targetClass="cc.xypp.cjluFree.MainActivity"
+
+            />
+        <categories android:name="android.intent.category.LAUNCHER" />
+    </shortcut>
+    <!-- Specify more shortcuts here. -->
+</shortcuts>

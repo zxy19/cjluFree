@@ -1,4 +1,4 @@
-package cc.xypp.autoSig;
+package cc.xypp.cjluFree;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -19,7 +19,7 @@ public class dataProvider extends ContentProvider {
     DBHelper mDbHelper = null;
     SQLiteDatabase db = null;
 
-    public static final String AUTOHORITY = "cc.xypp.autoSig.dataProvider";
+    public static final String AUTOHORITY = "cc.xypp.cjluFree.dataProvider";
     // 设置ContentProvider的唯一标识
 
     public static final int User_Code = 1;
@@ -48,7 +48,8 @@ public class dataProvider extends ContentProvider {
         db = mDbHelper.getWritableDatabase();
         initVal("auto","false");
         initVal("inj","false");
-        initVal("once","false");
+        initVal("once_inj","false");
+        initVal("quick","");
         return true;
     }
     public void initVal(String name,String val) {
