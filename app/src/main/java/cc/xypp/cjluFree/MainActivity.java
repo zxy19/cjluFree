@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import de.robv.android.xposed.XSharedPreferences;
 import cc.xypp.cjluFree.R;
@@ -20,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     Switch auto;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     Switch inj;
+    EditText passSrc,sigSrc;
     dataUtil data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +47,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         inj = findViewById(R.id.b_inj);
         auto = findViewById(R.id.b_auto);
-
+        passSrc=findViewById(R.id.passSrc);
+        sigSrc=findViewById(R.id.sigSrc);
         inj.setChecked(data.get("inj").equals("true"));
         auto.setChecked(data.get("auto").equals("true"));
+        passSrc.setText(data.get("passSrc"));
+        sigSrc.setText(data.get("sigSrc"));
+        sigSrc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                data.set("sigSrc", (String) v.getText());
+                return false;
+            }
+        });
+        passSrc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                data.set("passSrc", (String) v.getText());
+                return false;
+            }
+        });
     }
     public void autoChange(View view){
         data.set("auto",auto.isChecked()?"true":"false");
@@ -81,4 +102,5 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
 }

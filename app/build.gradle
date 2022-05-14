@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "cc.xypp.cjluFree"
-        minSdkVersion 26
+        minSdkVersion 22
         targetSdkVersion 32
         versionCode 5
         versionName "Beta 1.0.1"

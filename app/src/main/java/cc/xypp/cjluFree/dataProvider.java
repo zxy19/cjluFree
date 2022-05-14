@@ -50,6 +50,8 @@ public class dataProvider extends ContentProvider {
         initVal("inj","false");
         initVal("once_inj","false");
         initVal("quick","");
+        initVal("passSrc","https://xypp.cc/xposed/pass.php");
+        initVal("sigSrc","https://xypp.cc/xposed/");
         return true;
     }
     public void initVal(String name,String val) {

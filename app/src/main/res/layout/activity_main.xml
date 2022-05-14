@@ -7,26 +7,47 @@
     android:orientation="vertical"
     tools:context="cc.xypp.cjluFree.MainActivity">
 
+    <EditText
+        android:id="@+id/passSrc"
+        android:layout_width="212dp"
+        android:layout_height="50dp"
+        android:contentDescription="打卡脚本地址"
+        android:ems="10"
+        android:inputType="textUri"
+        app:layout_constraintEnd_toEndOf="@+id/b_auto"
+        app:layout_constraintTop_toBottomOf="@+id/sigSrc" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="82dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="12dp"
+        android:text="打卡脚本:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/sigSrc"
+        app:layout_constraintTop_toTopOf="@+id/sigSrc" />
+
     <Switch
         android:id="@+id/b_auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="152dp"
+        android:layout_marginTop="16dp"
         android:onClick="autoChange"
         android:text="启动时打开打卡页（全自动）"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.598"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/passSrc" />
 
     <Switch
         android:id="@+id/b_inj"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:onClick="injChange"
-        android:text="注入自动打卡脚本（该脚本联网）"
+        android:text="注入自动脚本（在上方更改URL）"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toEndOf="@+id/b_auto"
         app:layout_constraintTop_toBottomOf="@+id/b_auto" />
@@ -92,4 +113,27 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/sigSrc"
+        android:layout_width="211dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="打卡脚本地址"
+        android:ems="10"
+        android:inputType="textUri"
+        app:layout_constraintEnd_toEndOf="@+id/passSrc"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="102dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="1dp"
+        android:text="通行码脚本:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/passSrc"
+        app:layout_constraintTop_toTopOf="@+id/passSrc" />
 </androidx.constraintlayout.widget.ConstraintLayout>

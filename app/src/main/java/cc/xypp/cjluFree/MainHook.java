@@ -23,7 +23,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public class MainHook implements IXposedHookLoadPackage {
 
     private static final String JUMP_WEB = "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da";
-    private final String toInjScript = "document.body.appendChild(function(){var c=document.createElement(\"div\");c.style.position=\"fixed\";c.style.width=\"100px\";c.style.textAlign=\"center\";c.style.height=\"30px\";c.style.zIndez=\"1000000\";c.style.left=\"0px\";c.style.top=\"0px\";c.style.transition=\"all 1s\";c.style.opacity=\"0\";c.style.background=\"black\";c.style.color=\"white\";c.style.borderRadius=\"4px\";c.innerHTML=\"脚本已注入\";c.onclick=function(e){e.currentTarget.style.opacity=\"0\";var head=document.getElementsByTagName(\"head\")[0],tmt;if(tmt=document.getElementById(\"__injected_atos\")){head.removeChild(tmt);}var cc=document.createElement(\"script\");cc.src=\"https://xypp.cc/xposed/\";cc.id=\"__injected_atos\";cc.onload=function(){c.style.opacity=\"1\";};setTimeout(function(head,cc){head.appendChild(cc);},500,head,cc)};setTimeout(function(c){c.onclick({currentTarget:c});},500,c);return c;}());";
     private dataUtil data;
     private final HashSet<String> classNameSet = new HashSet<>();
 
@@ -35,6 +34,26 @@ public class MainHook implements IXposedHookLoadPackage {
     private boolean started = false;
     private boolean autoed = false;
     private boolean toExit = false;
+    private String getPassScript(){
+        return "document.body.appendChild(function(){var c=document.createElement(\"div\");c.style.position=\"fixed\";" +
+                "c.style.width=\"100px\";c.style.textAlign=\"center\";c.style.height=\"30px\";c.style.zIndez=\"1000000\";c.style.left=\"0px\";" +
+                "c.style.top=\"0px\";c.style.transition=\"all 1s\";c.style.opacity=\"0\";c.style.background=\"black\";c.style.color=\"white\";" +
+                "c.style.borderRadius=\"4px\";c.innerHTML=\"脚本已注入\";c.onclick=function(e){e.currentTarget.style.opacity=\"0\";" +
+                "var head=document.getElementsByTagName(\"head\")[0],tmt;if(tmt=document.getElementById(\"__injected_atos\")){head.removeChild(tmt);}var cc=document.createElement(\"script\");cc.src=\""+
+                data.get("passSrc")
+                +"\";cc.id=\"__injected_atos\";cc.onload=function(){c.style.opacity=\"1\";};setTimeout(function(head,cc){head.appendChild(cc);}" +
+                ",500,head,cc)};setTimeout(function(c){c.onclick({currentTarget:c});},500,c);return c;}());";
+    }
+    private String getSigScript(){
+        return "document.body.appendChild(function(){var c=document.createElement(\"div\");c.style.position=\"fixed\";" +
+                "c.style.width=\"100px\";c.style.textAlign=\"center\";c.style.height=\"30px\";c.style.zIndez=\"1000000\";c.style.left=\"0px\";" +
+                "c.style.top=\"0px\";c.style.transition=\"all 1s\";c.style.opacity=\"0\";c.style.background=\"black\";c.style.color=\"white\";" +
+                "c.style.borderRadius=\"4px\";c.innerHTML=\"脚本已注入\";c.onclick=function(e){e.currentTarget.style.opacity=\"0\";" +
+                "var head=document.getElementsByTagName(\"head\")[0],tmt;if(tmt=document.getElementById(\"__injected_atos\")){head.removeChild(tmt);}var cc=document.createElement(\"script\");cc.src=\""+
+                data.get("sigSrc")
+                +"\";cc.id=\"__injected_atos\";cc.onload=function(){c.style.opacity=\"1\";};setTimeout(function(head,cc){head.appendChild(cc);}" +
+                ",500,head,cc)};setTimeout(function(c){c.onclick({currentTarget:c});},500,c);return c;}());";
+    }
     /**
      * 处理Xposed注入事件
      *
@@ -155,6 +174,9 @@ public class MainHook implements IXposedHookLoadPackage {
                                 }else if (name.contains("com.tencent.wework.common.web.JsWebActivity")) {
                                     XVdLog("方法HOOK", "WwMainActivity");
                                     XposedHelpers.findAndHookMethod(clazz, "onStart", new JSStartHook());
+                                }else if(name.equals("android.webkit.WebView")) {
+                                    XposedBridge.hookAllConstructors(clazz, new WebViewConstructorHooker());
+                                    XposedBridge.hookMethod(findMethod(clazz, "setWebViewClient"), new WebviewHook());
                                 }
                             } catch (Exception e) {
                                 XVdLog("HOOK方法错误:LoadClass", e.toString());
@@ -177,7 +199,7 @@ public class MainHook implements IXposedHookLoadPackage {
             XVdLog("JSWeb", "启动JSWeb");
             Intent intent = new Intent();
             intent.setClassName(ctx, "com.tencent.wework.common.web.JsWebActivity");
-            intent.putExtra("extra_web_title", "健康打卡-自动化");
+            intent.putExtra("extra_web_title", "自动化页面中间页");
             intent.putExtra("extra_web_url", URL);
             ctx.startActivity(intent);
         } catch (Exception e) {
@@ -194,24 +216,7 @@ public class MainHook implements IXposedHookLoadPackage {
         XVdLog("初始化注入", "WebView相关");
         try {
             final Class<?> webViewClazz = XposedHelpers.findClass("android.webkit.WebView", lpparam.classLoader);
-            XposedBridge.hookAllConstructors(webViewClazz, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    XposedHelpers.callStaticMethod(webViewClazz, "setWebContentsDebuggingEnabled", true);
-                    XVdLog("WebView注入", "构造函数");
-                    final WebView webview = (WebView) param.thisObject;
-                    WebSettings webSettings = webview.getSettings();
-                    webSettings.setJavaScriptEnabled(true);
-                    if (hookCheck(webSettings.getClass().getName())) {
-                        XposedBridge.hookMethod(findMethod(webSettings.getClass(), "setJavaScriptEnabled"), new XC_MethodHook() {
-                            @Override
-                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                param.args[0] = true;
-                            }
-                        });
-                    }
-                }
-            });
+            XposedBridge.hookAllConstructors(webViewClazz, new WebViewConstructorHooker());
             XposedBridge.hookMethod(findMethod(webViewClazz, "setWebContentsDebuggingEnabled"), new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -292,6 +297,7 @@ public class MainHook implements IXposedHookLoadPackage {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             if (param.args[0] != null && hookCheck(param.args[0].getClass().getName())) {
+                XVdLog("WebViewHook", param.args[0].getClass().getName());
                 XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "onPageFinished"), new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -299,10 +305,18 @@ public class MainHook implements IXposedHookLoadPackage {
                         if (!data.get("inj").equals("true") && !data.get("once_inj").equals("true"))
                             return;
                         final WebView webview = (WebView) param.args[0];
+                        String url=webview.getUrl();
                         XVdLog("脚本注入判断", webview.getUrl());
-                        if (webview.getUrl().contains("https://qywx.cjlu.edu.cn/Pages/Detail") && !hasInj) {
-
-                            webview.evaluateJavascript(toInjScript, new ValueCallback<String>() {
+                        if (url.contains("https://qywx.cjlu.edu.cn/Pages/Detail") && !hasInj) {
+                            webview.evaluateJavascript(getSigScript(), new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String value) {
+                                    hasInj = true;
+                                    XVdLog("脚本注入", "结束");
+                                }
+                            });
+                        }else if(url.contains("http://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx")){
+                            webview.evaluateJavascript(getPassScript(), new ValueCallback<String>() {
                                 @Override
                                 public void onReceiveValue(String value) {
                                     hasInj = true;
@@ -312,7 +326,38 @@ public class MainHook implements IXposedHookLoadPackage {
                         }
                     }
                 });
+                XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "onPageStarted "), new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        try {
+                            super.beforeHookedMethod(param);
+                            XVdLog("当前加载", ((WebView) param.args[0]).getUrl());
+                        }catch (Exception e){
+                            XVdLog("startErr", e.toString());
+                        }
+                    }
+                });
             }
         }
     }
+
+    private class WebViewConstructorHooker extends XC_MethodHook{
+        @Override
+        protected void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+            XposedHelpers.callStaticMethod(param.thisObject.getClass(), "setWebContentsDebuggingEnabled", true);
+            XVdLog("WebView注入", "构造函数");
+            final WebView webview = (WebView) param.thisObject;
+            WebSettings webSettings = webview.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            if (hookCheck(webSettings.getClass().getName())) {
+                XposedBridge.hookMethod(findMethod(webSettings.getClass(), "setJavaScriptEnabled"), new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        param.args[0] = true;
+                    }
+                });
+            }
+        }
+    }
+
 }
