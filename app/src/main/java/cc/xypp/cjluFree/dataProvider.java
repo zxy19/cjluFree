@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,6 +51,8 @@ public class dataProvider extends ContentProvider {
         initVal("inj","false");
         initVal("once_inj","false");
         initVal("quick","");
+        initVal("im1","");
+        initVal("im2","");
         initVal("passSrc","https://xypp.cc/xposed/pass.php");
         initVal("sigSrc","https://xypp.cc/xposed/");
         return true;
@@ -103,7 +106,12 @@ public class dataProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        return db.update("datas",values,selection,selectionArgs)&notifyee(uri);
+        try {
+            return db.update("datas", values, selection, selectionArgs) & notifyee(uri);
+        }catch (Exception e){
+            Log.e("[AS_LOG]DTBERR",e.toString());
+            return 0;
+        }
     }
 
     /**

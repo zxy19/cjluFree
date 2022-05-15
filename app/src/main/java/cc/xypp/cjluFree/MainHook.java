@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
@@ -35,14 +37,35 @@ public class MainHook implements IXposedHookLoadPackage {
     private boolean autoed = false;
     private boolean toExit = false;
     private String getPassScript(){
-        return "document.body.appendChild(function(){var c=document.createElement(\"div\");c.style.position=\"fixed\";" +
-                "c.style.width=\"100px\";c.style.textAlign=\"center\";c.style.height=\"30px\";c.style.zIndez=\"1000000\";c.style.left=\"0px\";" +
-                "c.style.top=\"0px\";c.style.transition=\"all 1s\";c.style.opacity=\"0\";c.style.background=\"black\";c.style.color=\"white\";" +
-                "c.style.borderRadius=\"4px\";c.innerHTML=\"脚本已注入\";c.onclick=function(e){e.currentTarget.style.opacity=\"0\";" +
-                "var head=document.getElementsByTagName(\"head\")[0],tmt;if(tmt=document.getElementById(\"__injected_atos\")){head.removeChild(tmt);}var cc=document.createElement(\"script\");cc.src=\""+
-                data.get("passSrc")
-                +"\";cc.id=\"__injected_atos\";cc.onload=function(){c.style.opacity=\"1\";};setTimeout(function(head,cc){head.appendChild(cc);}" +
-                ",500,head,cc)};setTimeout(function(c){c.onclick({currentTarget:c});},500,c);return c;}());";
+        String B2="";
+        return "document.body.appendChild(function(){\n" +
+                "    var cs=document.createElement(\"style\");\n" +
+                "    cs.innerHTML=\"#bglayer{background-image:url("+data.get("im1")+")!important;background-size: cover;background-position: center;position:fixed;left:0;top:0;right:0;bottom:0;z-index:-1;}\"+\n" +
+                "    \"body{background:tranparent!important;}\"+\n" +
+                "    \".combg{background:#ffffffa3!important;}\"+\n" +
+                "    \".passcode{height:500px!important;position:relative;}\"+\n" +
+                "    \"#notice{position:absolute;bottom: 15px;left: 0;right: 0;}\"+\n" +
+                "    \".passstatus{right: -14px;top: -19px;}\"+\n" +
+                "    \".card{border-radius:11px;overflow:hidden;}\"+\n" +
+                "    \"*{transition:all 0.7s;}\"+\n" +
+                "    \"#rq{display: inline-block;padding-right: 12px;color:lightgray;}\"+\n" +
+                "    \"#sj{font-size: 30px;display: inline-block;color:gray;}\"+\n" +
+                "    \"#bglayer-card{background: linear-gradient(45deg, black 4%,transparent 63%);position: absolute;left: 13px;top: 12px;right: 0;height: 150px;z-index: 0;border-radius: 11px;}\"+\n" +
+                "    \".card div{z-index:1;}\"\n" +
+                "    ;\n" +
+                "    return cs;\n" +
+                "}());\n" +
+                "document.body.appendChild(function(){\n" +
+                "    var t=document.createElement(\"div\");\n" +
+                "    t.id=\"bglayer\";\n" +
+                "    return t;\n" +
+                "}())\n" +
+                "$(\".card\")[0].appendChild(function(){\n" +
+                "    var t=document.createElement(\"div\");\n" +
+                "    t.id=\"bglayer-card\";\n" +
+                "    return t;\n" +
+                "}())\n" +
+                "$(\".card .bgimg\").attr(\"src\",\""+data.get("im2")+"\");\n";
     }
     private String getSigScript(){
         return "document.body.appendChild(function(){var c=document.createElement(\"div\");c.style.position=\"fixed\";" +
@@ -235,6 +258,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 return method;
             }
         }
+        XVdLog("METHOD_NOT_FOUND", clazz.toString()+":"+name);
         return null;
     }
 
@@ -308,6 +332,7 @@ public class MainHook implements IXposedHookLoadPackage {
                         String url=webview.getUrl();
                         XVdLog("脚本注入判断", webview.getUrl());
                         if (url.contains("https://qywx.cjlu.edu.cn/Pages/Detail") && !hasInj) {
+                            XVdLog("脚本注入", "确认开始");
                             webview.evaluateJavascript(getSigScript(), new ValueCallback<String>() {
                                 @Override
                                 public void onReceiveValue(String value) {
@@ -315,25 +340,35 @@ public class MainHook implements IXposedHookLoadPackage {
                                     XVdLog("脚本注入", "结束");
                                 }
                             });
-                        }else if(url.contains("http://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx")){
+                        }else if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx")){
+                            XVdLog("脚本注入", "确认开始");
                             webview.evaluateJavascript(getPassScript(), new ValueCallback<String>() {
                                 @Override
                                 public void onReceiveValue(String value) {
-                                    hasInj = true;
                                     XVdLog("脚本注入", "结束");
                                 }
                             });
                         }
                     }
                 });
-                XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "onPageStarted "), new XC_MethodHook() {
+                XVdLog("WebViewHookB", param.args[0].getClass().getName());
+                XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "onPageStarted"), new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            super.beforeHookedMethod(param);
-                            XVdLog("当前加载", ((WebView) param.args[0]).getUrl());
-                        }catch (Exception e){
-                            XVdLog("startErr", e.toString());
+                        XVdLog("脚本注入P", "ENT");
+                        if (!data.get("inj").equals("true") && !data.get("once_inj").equals("true"))
+                            return;
+                        final WebView webview = (WebView) param.args[0];
+                        String url= (String) param.args[1];
+                        XVdLog("脚本注入判断P", url);
+                        if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx")){
+                            XVdLog("脚本注入P", "确认开始");
+                            webview.evaluateJavascript(getPassScript(), new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String value) {
+                                    XVdLog("脚本注入P", "结束");
+                                }
+                            });
                         }
                     }
                 });

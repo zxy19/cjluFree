@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,6 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import de.robv.android.xposed.XSharedPreferences;
 import cc.xypp.cjluFree.R;
@@ -67,6 +74,42 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        AssetManager accMgr = getResources().getAssets();
+        try {
+
+            try {
+                InputStream is = accMgr.open("B1.png");
+                if(is.available()!=0) {
+                    byte[] t = new byte[is.available()];
+                    is.read(t);
+                    String res = Base64.encodeToString(t, Base64.DEFAULT);
+                    if (!TextUtils.isEmpty(res)) {
+                        data.set("im1", "data:image/png;base64," + res.replace("\n",""));
+                    }
+                }
+                is.close();
+            } catch (Exception e) {
+                XVdLog("merr", e.toString());
+            }
+            try {
+                InputStream is = accMgr.open("B2.png");
+                if(is.available()!=0) {
+                    byte[] t = new byte[is.available()];
+                    is.read(t);
+                    String res = Base64.encodeToString(t, Base64.DEFAULT);
+                    if (!TextUtils.isEmpty(res)) {
+                        data.set("im2", "data:image/png;base64," + res.replace("\n",""));
+                    }
+                }
+                is.close();
+            } catch (Exception e) {
+                XVdLog("merr", e.toString());
+            }
+
+        }catch (Exception e){
+            XVdLog("merrg", e.toString());
+        }
+        //accMgr.close();
     }
     public void autoChange(View view){
         data.set("auto",auto.isChecked()?"true":"false");
@@ -101,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
+    }
+    private void XVdLog(String flg, String content) {
+        Log.i("[AS_LOG]" + flg, content);
     }
 
 }
