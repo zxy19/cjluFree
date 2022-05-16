@@ -8,7 +8,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ThinkPad/StudioProjects/cjluFree/app/src/main/res/layout/activity_agreement.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/cjluFree/app/src/main/res/layout/activity_editor2.xml" value="0.5" />
         <entry key="..\:/Users/ThinkPad/StudioProjects/cjluFree/app/src/main/res/layout/activity_main.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/cjluFree/app/src/main/res/layout/activity_setting.xml" value="0.33" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_icon_pass_front.xml" value="0.161" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_icon_sig_back.xml" value="0.146" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_icon_sig_front.xml" value="0.161" />

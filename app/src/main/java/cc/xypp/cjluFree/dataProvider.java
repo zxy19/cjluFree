@@ -49,12 +49,15 @@ public class dataProvider extends ContentProvider {
         db = mDbHelper.getWritableDatabase();
         initVal("auto","false");
         initVal("inj","false");
+        initVal("inj_pass","false");
         initVal("once_inj","false");
         initVal("quick","");
         initVal("im1","");
         initVal("im2","");
-        initVal("passSrc","https://xypp.cc/xposed/pass.php");
-        initVal("sigSrc","https://xypp.cc/xposed/");
+        initVal("im3","");
+        initVal("agree","");
+        initVal("pass_src","");
+        initVal("sig_src","");
         return true;
     }
     public void initVal(String name,String val) {

@@ -21,21 +21,22 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import de.robv.android.xposed.XSharedPreferences;
 import cc.xypp.cjluFree.R;
 
 public class MainActivity extends AppCompatActivity {
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch auto;
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch inj;
-    EditText passSrc,sigSrc;
     dataUtil data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data=new dataUtil(getContentResolver());
+        if(!data.get("agree").equals("true")){
+            startActivity(new Intent(this,AgreementActivity.class));
+            finish();
+            return;
+        }
         String quick = getIntent().getAction();
         if(quick!=null){
             Log.i("[AS_LOG][APP]INTENT", quick);
@@ -52,75 +53,56 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         setContentView(R.layout.activity_main);
-        inj = findViewById(R.id.b_inj);
-        auto = findViewById(R.id.b_auto);
-        passSrc=findViewById(R.id.passSrc);
-        sigSrc=findViewById(R.id.sigSrc);
-        inj.setChecked(data.get("inj").equals("true"));
-        auto.setChecked(data.get("auto").equals("true"));
-        passSrc.setText(data.get("passSrc"));
-        sigSrc.setText(data.get("sigSrc"));
-        sigSrc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                data.set("sigSrc", (String) v.getText());
-                return false;
-            }
-        });
-        passSrc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                data.set("passSrc", (String) v.getText());
-                return false;
-            }
-        });
+
         AssetManager accMgr = getResources().getAssets();
         try {
-
+            if(data.get("pass_src").equals(""))
             try {
-                InputStream is = accMgr.open("B1.png");
+                InputStream is = accMgr.open("pass.js");
                 if(is.available()!=0) {
                     byte[] t = new byte[is.available()];
                     is.read(t);
-                    String res = Base64.encodeToString(t, Base64.DEFAULT);
+                    String res = new String(t);
                     if (!TextUtils.isEmpty(res)) {
-                        data.set("im1", "data:image/png;base64," + res.replace("\n",""));
+                        data.set("pass_src", res);
                     }
                 }
                 is.close();
             } catch (Exception e) {
                 XVdLog("merr", e.toString());
             }
+            if(data.get("sig_src").equals(""))
             try {
-                InputStream is = accMgr.open("B2.png");
+                InputStream is = accMgr.open("sig.js");
                 if(is.available()!=0) {
                     byte[] t = new byte[is.available()];
                     is.read(t);
-                    String res = Base64.encodeToString(t, Base64.DEFAULT);
+                    String res = new String(t);
                     if (!TextUtils.isEmpty(res)) {
-                        data.set("im2", "data:image/png;base64," + res.replace("\n",""));
+                        data.set("sig_src", res);
                     }
                 }
                 is.close();
             } catch (Exception e) {
                 XVdLog("merr", e.toString());
             }
-
         }catch (Exception e){
             XVdLog("merrg", e.toString());
         }
         //accMgr.close();
-    }
-    public void autoChange(View view){
-        data.set("auto",auto.isChecked()?"true":"false");
-    }
-    public void injChange(View view){
-        data.set("inj",inj.isChecked()?"true":"false");
-    }
 
+        //startWeWork();
+    }
+    public void setting(View view){
+        startActivity(new Intent(view.getContext(), SettingActivity.class));
+    }
     public void openSig(View view){
         data.set("quick","sig");
-        data.set("once_inj","true");
+        startWeWork();
+    }
+    public void openSigA(View view){
+        data.set("quick","sig");
+
         startWeWork();
     }
     public void openPass(View view){
@@ -139,11 +121,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void startWeWork() {
-        Intent intent = getPackageManager().getLaunchIntentForPackage("com.tencent.wework");
-        if (intent != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
+        //Intent intent = getPackageManager().getLaunchIntentForPackage("com.tencent.wework");
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setClassName("com.tencent.wework", "com.tencent.wework.launch.LaunchSplashEduActivity");
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        startActivity(intent);
     }
     private void XVdLog(String flg, String content) {
         Log.i("[AS_LOG]" + flg, content);
