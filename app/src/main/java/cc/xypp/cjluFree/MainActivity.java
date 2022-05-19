@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -25,9 +27,11 @@ import java.util.Arrays;
 
 import de.robv.android.xposed.XSharedPreferences;
 import cc.xypp.cjluFree.R;
+import rikka.shizuku.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Shizuku.OnRequestPermissionResultListener{
     dataUtil data;
+    @SuppressLint("BlockedPrivateApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this,AgreementActivity.class));
             finish();
             return;
+        }
+        if (Shizuku.pingBinder()) {
+            if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+                Shizuku.requestPermission(0);
+            }
         }
         Intent intent = getIntent();
         String quick = intent.getAction();
@@ -165,5 +174,8 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("act",WifiActivity.ACTION_CLOSE);
         i.putExtra("afterAction",action);
         startActivity(i);
+    }
+    @Override
+    public void onRequestPermissionResult(int requestCode, int grantResult) {
     }
 }

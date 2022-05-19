@@ -22,13 +22,13 @@
         android:id="@+id/b_inj_pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:onClick="optChange"
         android:tag="inj_pass"
         android:text="注入个性化脚本"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="@+id/button9"
-        app:layout_constraintTop_toBottomOf="@+id/button9" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
         android:id="@+id/button8"
@@ -54,11 +54,12 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="8dp"
         android:text="打卡设置"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/b_wifi" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <Switch
         android:id="@+id/b_inj"
@@ -93,7 +94,7 @@
         android:tag="image/im1"
         android:text="大底图"
         app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/b_inj_pass" />
 
     <TextView
         android:id="@+id/textView3"
@@ -101,6 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:text="通行码设置"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/b_auto" />
 
@@ -128,8 +130,17 @@
         android:id="@+id/textView5"
         android:layout_width="306dp"
         android:layout_height="85dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="28dp"
         android:text="脚本模板清除后重启将会恢复到初始值。若不需要可以输入任意内容"
         app:layout_constraintStart_toStartOf="@+id/button9"
-        app:layout_constraintTop_toBottomOf="@+id/b_inj_pass" />
+        app:layout_constraintTop_toBottomOf="@+id/button9" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="该选项用于在有内网wifi的情况下，自动关闭wifi来防止内网打不开相关页面。控制方式会在原生，Root，Shizuku，弹窗中依次降级选择"
+        app:layout_constraintEnd_toEndOf="@+id/b_wifi"
+        app:layout_constraintStart_toStartOf="@+id/b_wifi"
+        app:layout_constraintTop_toBottomOf="@+id/b_wifi" />
 </androidx.constraintlayout.widget.ConstraintLayout>

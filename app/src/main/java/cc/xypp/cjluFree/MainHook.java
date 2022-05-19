@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -27,7 +28,9 @@ public class MainHook implements IXposedHookLoadPackage {
     private static final String JUMP_WEB = "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da";
     private dataUtil data;
     private final HashSet<String> classNameSet = new HashSet<>();
+    public void onCreate(Bundle b){
 
+    }
     private void XVdLog(String flg, String content) {
         Log.i("[AS_LOG]" + flg, content);
     }
