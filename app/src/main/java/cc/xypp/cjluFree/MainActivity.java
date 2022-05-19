@@ -37,17 +37,34 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        String quick = getIntent().getAction();
+        Intent intent = getIntent();
+        String quick = intent.getAction();
         if(quick!=null){
             Log.i("[AS_LOG][APP]INTENT", quick);
             if(quick.equals("cc.xypp.cjluFree.sig")){
                 data.set("quick","sig");
+
+                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
+                    startAfterWifi("cc.xypp.cjluFree.sig");
+                    finish();
+                }
+            }else if(quick.equals("cc.xypp.cjluFree.siga")){
+                data.set("quick","sig");
                 data.set("once_inj","true");
+                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
+                    startAfterWifi("cc.xypp.cjluFree.siga");
+                    finish();
+                }
             }else if(quick.equals("cc.xypp.cjluFree.pass")){
                 data.set("quick","pass");
+                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
+                    startAfterWifi("cc.xypp.cjluFree.pass");
+                    finish();
+                }
             }else quick=null;
 
             if(quick!=null){
+
                 startWeWork();
                 finish();
             }
@@ -97,17 +114,29 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(view.getContext(), SettingActivity.class));
     }
     public void openSig(View view){
+        if(data.get("auto_wifi").equals("true")) {
+            startAfterWifi("cc.xypp.cjluFree.sig");
+            return;
+        }
         data.set("quick","sig");
+
         startWeWork();
     }
     public void openSigA(View view){
+        if(data.get("auto_wifi").equals("true")) {
+            startAfterWifi("cc.xypp.cjluFree.siga");
+            return;
+        }
         data.set("quick","sig");
-
+        data.set("inj_once","true");
         startWeWork();
     }
     public void openPass(View view){
+        if(data.get("auto_wifi").equals("true")) {
+            startAfterWifi("cc.xypp.cjluFree.pass");
+            return;
+        }
         data.set("quick","pass");
-
         startWeWork();
     }
     public void openX5D(View view){
@@ -131,4 +160,10 @@ public class MainActivity extends AppCompatActivity {
         Log.i("[AS_LOG]" + flg, content);
     }
 
+    private void startAfterWifi(String action){
+        Intent i = new Intent(this,WifiActivity.class);
+        i.putExtra("act",WifiActivity.ACTION_CLOSE);
+        i.putExtra("afterAction",action);
+        startActivity(i);
+    }
 }

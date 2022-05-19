@@ -18,6 +18,7 @@ public class SettingActivity extends AppCompatActivity {
         ((Switch)findViewById(R.id.b_inj)).setChecked(data.get("inj").equals("true"));
         ((Switch)findViewById(R.id.b_auto)).setChecked(data.get("auto").equals("true"));
         ((Switch)findViewById(R.id.b_inj_pass)).setChecked(data.get("inj_pass").equals("true"));
+        ((Switch)findViewById(R.id.b_wifi)).setChecked(data.get("auto_wifi").equals("true"));
     }
     public void optChange(View view){
         data.set((String) view.getTag(),((Switch)view).isChecked()?"true":"false");

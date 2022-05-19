@@ -58,6 +58,7 @@ public class dataProvider extends ContentProvider {
         initVal("agree","");
         initVal("pass_src","");
         initVal("sig_src","");
+        initVal("auto_wifi","");
         return true;
     }
     public void initVal(String name,String val) {

@@ -250,7 +250,15 @@ public class MainHook implements IXposedHookLoadPackage {
             if(toExit){
                 toExit=false;
                 started=false;
+                if(data.get("auto_wifi").equals("true")){
+                    Intent i=new Intent("cc.xypp.cjluFree.wifi");
+                    i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.WifiActivity");
+                    i.putExtra("act",WifiActivity.ACTION_OPEN);
+                    ((Activity)param.thisObject).startActivity(i);
+                }
+
                 ((Activity)param.thisObject).finish();
+
                 return;
             }
             if (started) return;

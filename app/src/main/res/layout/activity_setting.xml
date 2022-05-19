@@ -7,6 +7,18 @@
     tools:context=".SettingActivity">
 
     <Switch
+        android:id="@+id/b_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="optChange"
+        android:tag="auto_wifi"
+        android:text="自动关闭WIFI（校内网WIFI勾选）"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
         android:id="@+id/b_inj_pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,10 +55,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="打卡设置"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/b_wifi" />
 
     <Switch
         android:id="@+id/b_inj"
