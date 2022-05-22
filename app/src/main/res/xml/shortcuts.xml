@@ -7,9 +7,9 @@
         android:shortcutLongLabel="@string/pass_n"
         android:shortcutDisabledMessage="@string/pass_b">
         <intent
-            android:action="cc.xypp.cjluFree.pass"
+            android:action="android.intent.action.MAIN"
             android:targetPackage="cc.xypp.cjluFree"
-            android:targetClass="cc.xypp.cjluFree.MainActivity"
+            android:targetClass="cc.xypp.cjluFree.PasscodeActivity"
             />
         <categories android:name="android.intent.category.LAUNCHER" />
     </shortcut>
@@ -21,9 +21,9 @@
         android:shortcutLongLabel="@string/sig_n"
         android:shortcutDisabledMessage="@string/sig_b">
         <intent
-            android:action="cc.xypp.cjluFree.sig"
+            android:action="android.intent.action.MAIN"
             android:targetPackage="cc.xypp.cjluFree"
-            android:targetClass="cc.xypp.cjluFree.MainActivity"
+            android:targetClass="cc.xypp.cjluFree.PunchActivity"
 
             />
         <categories android:name="android.intent.category.LAUNCHER" />

@@ -5,13 +5,19 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ImageView;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -28,13 +34,13 @@ public class MainHook implements IXposedHookLoadPackage {
     private static final String JUMP_WEB = "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da";
     private dataUtil data;
     private final HashSet<String> classNameSet = new HashSet<>();
-    public void onCreate(Bundle b){
-
-    }
+    private final boolean enableLog = false;
     private void XVdLog(String flg, String content) {
-        Log.i("[AS_LOG]" + flg, content);
-    }
 
+        Log.i("[AS_LOG_NORMAL]" + flg, content);
+    }
+    Activity activity;
+    Context ctx;
     private boolean hasInj = false;
     private boolean started = false;
     private boolean autoed = false;
@@ -45,7 +51,9 @@ public class MainHook implements IXposedHookLoadPackage {
         return res
                 .replace("{{T:im1}}",data.get("im1").replace("\n",""))
                 .replace("{{T:im2}}",data.get("im2").replace("\n",""))
-                .replace("{{T:im3}}",data.get("im3").replace("\n",""));
+                .replace("{{T:im3}}",data.get("im3").replace("\n",""))
+                .replace("{{T:zoom}}",data.get("auto_zoom").equals("true")?"1.5":"1.0")
+                .replace("{{T:goldCode}}",data.get("auto_gold"));
     }
     private String getSigScript(){
         return data.get("sig_src");
@@ -65,6 +73,7 @@ public class MainHook implements IXposedHookLoadPackage {
                     started = false;
                     autoed= false;
                     toExit = false;
+                    data=null;
                     this.hookSystemWebView(lpparam);
                     this.hookAutomation(lpparam);
                 } catch (Exception e) {
@@ -102,6 +111,7 @@ public class MainHook implements IXposedHookLoadPackage {
                     try {
                         Context applicationContext = (Context) param.getResult();
                         if (applicationContext == null) return;
+                        ctx=applicationContext;
                         XVdLog("取得Context", applicationContext.toString());
                         ContentResolver rsv = applicationContext.getContentResolver();
                         if (rsv == null) return;
@@ -142,7 +152,6 @@ public class MainHook implements IXposedHookLoadPackage {
         } catch (Exception e) {
             XVdLog("HOOK方法错误:JsWebActivity", e.toString());
         }
-
     }
 
     /**
@@ -162,17 +171,23 @@ public class MainHook implements IXposedHookLoadPackage {
                             super.afterHookedMethod(param);
                             try {
                                 Class<?> clazz = (Class<?>) param.getResult();
+                                //Log.i("[AS_DBG]","ClassLoader Loaded:"+clazz.toString());
                                 if (clazz == null) return;
                                 String name = clazz.getName();
+
                                 if (name.contains("com.tencent.wework.launch.WwMainActivity")) {
-                                    XVdLog("方法HOOK", "WwMainActivity");
+                                    XVdLog("_方法HOOK", "WwMainActivity");
                                     XposedHelpers.findAndHookMethod(clazz, "onStart", new WmMainHook());
                                 }else if (name.contains("com.tencent.wework.common.web.JsWebActivity")) {
-                                    XVdLog("方法HOOK", "WwMainActivity");
+                                    XVdLog("_方法HOOK", "WwMainActivity");
                                     XposedHelpers.findAndHookMethod(clazz, "onStart", new JSStartHook());
                                 }else if(name.equals("android.webkit.WebView")) {
+                                    XVdLog("_方法HOOK", "WebView");
                                     XposedBridge.hookAllConstructors(clazz, new WebViewConstructorHooker());
                                     XposedBridge.hookMethod(findMethod(clazz, "setWebViewClient"), new WebviewHook());
+                                }else if(name.contains("com.tencent.wework.launch.LaunchSplashDefaultFragment")) {
+                                    XposedHelpers.findAndHookMethod(clazz, "a",BitmapDrawable.class,boolean.class,String.class,String.class,String.class,new BitmapHooker());
+                                    XVdLog("_方法HOOK", "LaunchSplashDefaultFragment");
                                 }
                             } catch (Exception e) {
                                 XVdLog("HOOK方法错误:LoadClass", e.toString());
@@ -253,19 +268,23 @@ public class MainHook implements IXposedHookLoadPackage {
             if(toExit){
                 toExit=false;
                 started=false;
-                if(data.get("auto_wifi").equals("true")){
+                if(data.get("auto_wifi").equals("true") && data.get("is_auto_wifi").equals("true")){
                     Intent i=new Intent("cc.xypp.cjluFree.wifi");
                     i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.WifiActivity");
                     i.putExtra("act",WifiActivity.ACTION_OPEN);
                     ((Activity)param.thisObject).startActivity(i);
+                    data.set("is_auto_wifi","false");
                 }
 
                 ((Activity)param.thisObject).finish();
-
                 return;
             }
-            if (started) return;
+            if (started) {
+//                ((Activity)param.thisObject).finish();
+                return;
+            }
             started = true;
+
             hasInj=false;
             XVdLog("WwMainActivity类", "标记启动");
             autoed=true;
@@ -295,7 +314,17 @@ public class MainHook implements IXposedHookLoadPackage {
             if(autoed){
                 toExit=true;
             }
+            activity=((Activity)param.thisObject);
         }
+    }
+
+    private void setBright(float bright) {
+        try {
+            Window window = activity.getWindow();
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.screenBrightness = bright;
+            window.setAttributes(layoutParams);
+        }catch (Exception e){XVdLog("亮度设置错误", e.toString());}
     }
 
     private class WebviewHook extends XC_MethodHook {
@@ -328,6 +357,9 @@ public class MainHook implements IXposedHookLoadPackage {
                                     XVdLog("脚本注入", "结束");
                                 }
                             });
+                        }
+                        if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("auto_bright").equals("true")){
+                            setBright(1.0f);
                         }
                     }
                 });
@@ -369,6 +401,24 @@ public class MainHook implements IXposedHookLoadPackage {
                         param.args[0] = true;
                     }
                 });
+            }
+        }
+    }
+    private class BitmapHooker extends XC_MethodHook{
+        @Override
+        protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param){
+            XVdLog("LaunchSplashDefaultFragment", "命中");
+            try {
+                String varContent = data.get("im_l");
+                if (varContent.startsWith("data:image/")) {
+                    XVdLog("LaunchSplashDefaultFragment", "替换");
+                    varContent = varContent.substring(varContent.indexOf("base64,") + 7);
+                    byte[] imgDat = Base64.decode(varContent, Base64.DEFAULT);
+                    Bitmap bm = BitmapFactory.decodeByteArray(imgDat, 0, imgDat.length);
+                    param.args[0] = new BitmapDrawable(ctx.getResources(), bm);
+                }
+            }catch (Exception e){
+                XVdLog("LaunchSplashDefaultFragment错误", e.toString());
             }
         }
     }

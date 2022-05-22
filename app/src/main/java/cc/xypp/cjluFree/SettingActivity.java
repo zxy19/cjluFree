@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 
@@ -19,6 +20,10 @@ public class SettingActivity extends AppCompatActivity {
         ((Switch)findViewById(R.id.b_auto)).setChecked(data.get("auto").equals("true"));
         ((Switch)findViewById(R.id.b_inj_pass)).setChecked(data.get("inj_pass").equals("true"));
         ((Switch)findViewById(R.id.b_wifi)).setChecked(data.get("auto_wifi").equals("true"));
+        ((Switch)findViewById(R.id.b_bright)).setChecked(data.get("auto_bright").equals("true"));
+        ((Switch)findViewById(R.id.b_zoom)).setChecked(data.get("auto_zoom").equals("true"));
+        ((Switch)findViewById(R.id.b_gold)).setChecked(data.get("auto_gold").equals("true"));
+        ((Switch)findViewById(R.id.b_updatea)).setChecked(data.get("auto_update").equals("true"));
     }
     public void optChange(View view){
         data.set((String) view.getTag(),((Switch)view).isChecked()?"true":"false");

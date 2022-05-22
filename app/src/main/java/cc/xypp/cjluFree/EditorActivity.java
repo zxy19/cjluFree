@@ -41,20 +41,29 @@ public class EditorActivity extends AppCompatActivity {
         Intent i = getIntent();
         desc=varName=i.getStringExtra("varName");
         varType=i.getStringExtra("varType");
-        varContent=data.get(varName);
+        try {
+            varContent = data.get(varName);
+        }catch (Exception e){
+            varContent="";
+        }
         if(varType.equals("image")){
             isImage=true;
         }else isImage=false;
 
         if(isImage){
-            if(varContent.startsWith("data:image/")) {
-                imType=varContent.substring(11,varContent.indexOf(";"));
-                varContent = varContent.substring(varContent.indexOf("base64,") + 7);
-                byte[] imgDat=Base64.decode(varContent, Base64.DEFAULT);
-                Bitmap bm = BitmapFactory.decodeByteArray(imgDat,0,imgDat.length);
-                ((ImageView)findViewById(R.id.image_view)).setImageBitmap(bm);
-                desc+="[图片-"+imType+"]";
-            }else desc+="[图片-无]";
+            try {
+                if (varContent.startsWith("data:image/")) {
+                    imType = varContent.substring(11, varContent.indexOf(";"));
+                    varContent = varContent.substring(varContent.indexOf("base64,") + 7);
+                    byte[] imgDat = Base64.decode(varContent, Base64.DEFAULT);
+                    Bitmap bm = BitmapFactory.decodeByteArray(imgDat, 0, imgDat.length);
+                    ((ImageView) findViewById(R.id.image_view)).setImageBitmap(bm);
+                    desc += "[图片-" + imType + "]";
+                } else desc += "[图片-无]";
+            }catch (Exception e){
+                desc += "[图片-异常]";
+                varContent="";
+            }
             ((ImageView)findViewById(R.id.image_view)).setVisibility(View.VISIBLE);
             ((Button)findViewById(R.id.image_clear)).setVisibility(View.VISIBLE);
             ((Button)findViewById(R.id.image_load)).setVisibility(View.VISIBLE);

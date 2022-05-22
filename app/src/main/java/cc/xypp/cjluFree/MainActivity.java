@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
             Log.i("[AS_LOG][APP]INTENT", quick);
             if(quick.equals("cc.xypp.cjluFree.sig")){
                 data.set("quick","sig");
-
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.sig");
                     finish();
+                    return;
                 }
             }else if(quick.equals("cc.xypp.cjluFree.siga")){
                 data.set("quick","sig");
@@ -63,17 +63,21 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.siga");
                     finish();
+                    return;
                 }
             }else if(quick.equals("cc.xypp.cjluFree.pass")){
                 data.set("quick","pass");
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.pass");
                     finish();
+                    return;
                 }
             }else quick=null;
 
             if(quick!=null){
-
+                if(intent.getBooleanExtra("autoStartWifi",false)){
+                    data.set("is_auto_wifi","true");
+                }
                 startWeWork();
                 finish();
             }
@@ -82,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
 
         AssetManager accMgr = getResources().getAssets();
         try {
-            if(data.get("pass_src").equals(""))
+            if(data.get("pass_src").equals("") || data.get("auto_update").equals("true"))
             try {
                 InputStream is = accMgr.open("pass.js");
                 if(is.available()!=0) {
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
             } catch (Exception e) {
                 XVdLog("merr", e.toString());
             }
-            if(data.get("sig_src").equals(""))
+            if(data.get("sig_src").equals("") || data.get("auto_update").equals("true"))
             try {
                 InputStream is = accMgr.open("sig.js");
                 if(is.available()!=0) {
@@ -123,30 +127,13 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
         startActivity(new Intent(view.getContext(), SettingActivity.class));
     }
     public void openSig(View view){
-        if(data.get("auto_wifi").equals("true")) {
-            startAfterWifi("cc.xypp.cjluFree.sig");
-            return;
-        }
-        data.set("quick","sig");
-
-        startWeWork();
+        startSelf("cc.xypp.cjluFree.sig");
     }
     public void openSigA(View view){
-        if(data.get("auto_wifi").equals("true")) {
-            startAfterWifi("cc.xypp.cjluFree.siga");
-            return;
-        }
-        data.set("quick","sig");
-        data.set("inj_once","true");
-        startWeWork();
+        startSelf("cc.xypp.cjluFree.siga");
     }
     public void openPass(View view){
-        if(data.get("auto_wifi").equals("true")) {
-            startAfterWifi("cc.xypp.cjluFree.pass");
-            return;
-        }
-        data.set("quick","pass");
-        startWeWork();
+        startSelf("cc.xypp.cjluFree.pass");
     }
     public void openX5D(View view){
         data.set("quick","x5");
@@ -177,5 +164,14 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
     }
     @Override
     public void onRequestPermissionResult(int requestCode, int grantResult) {
+    }
+    public void killApp(View view){
+        Intent i = new Intent(this,killAppActivity.class);
+        startActivity(i);
+    }
+    private void startSelf(String action){
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.setAction(action);
+        startActivity(intent);
     }
 }

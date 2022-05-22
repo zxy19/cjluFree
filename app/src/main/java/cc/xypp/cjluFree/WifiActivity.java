@@ -28,7 +28,7 @@ public class WifiActivity extends AppCompatActivity {
         final int action;
         final Context ctx=this;
         final String afterActivity,afterAction;
-
+        final boolean[] autoStartWifi = {false};
         action=i.getIntExtra("act",-1);
         afterAction=i.getStringExtra("afterAction");
         System.out.println("ACT:"+action);
@@ -56,6 +56,7 @@ public class WifiActivity extends AppCompatActivity {
                     }
                 }else if(action==ACTION_CLOSE){
                     if(wm.getWifiState()!=WifiManager.WIFI_STATE_DISABLED && wifiNetworkInfo.getType()==ConnectivityManager.TYPE_WIFI){
+                        autoStartWifi[0] =true;
                         setWifi(wm,false);
                         for(int i=0;i<20&&(wm.getWifiState()!=WifiManager.WIFI_STATE_DISABLED||selecting);i++) {
                             try {
@@ -66,7 +67,7 @@ public class WifiActivity extends AppCompatActivity {
                         }
                     }
                 }
-                actionDone(afterAction);
+                actionDone(afterAction, autoStartWifi[0]);
             }
         }).start();
     }
@@ -80,12 +81,13 @@ public class WifiActivity extends AppCompatActivity {
         startActivityForResult(panelIntent,32);
     }
 
-    private void actionDone(String a) {
+    private void actionDone(String a,boolean autoStartWifi) {
         selecting=false;
         if(a!=null && !a.equals("")){
             Intent i = new Intent(a);
             i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.MainActivity");
             i.putExtra("wifi",false);
+            i.putExtra("autoStartWifi",autoStartWifi);
             startActivity(i);
         }
         finish();
