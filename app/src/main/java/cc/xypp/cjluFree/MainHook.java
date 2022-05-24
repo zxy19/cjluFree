@@ -268,13 +268,13 @@ public class MainHook implements IXposedHookLoadPackage {
             if(toExit){
                 toExit=false;
                 started=false;
-                if(data.get("auto_wifi").equals("true") && data.get("is_auto_wifi").equals("true")){
-                    Intent i=new Intent("cc.xypp.cjluFree.wifi");
-                    i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.WifiActivity");
-                    i.putExtra("act",WifiActivity.ACTION_OPEN);
-                    ((Activity)param.thisObject).startActivity(i);
-                    data.set("is_auto_wifi","false");
-                }
+//                if(data.get("auto_wifi").equals("true") && data.get("is_auto_wifi").equals("true")){
+//                    Intent i=new Intent("cc.xypp.cjluFree.wifi");
+//                    i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.WifiActivity");
+//                    i.putExtra("act",WifiActivity.ACTION_OPEN);
+//                    ((Activity)param.thisObject).startActivity(i);
+//                    data.set("is_auto_wifi","false");
+//                }
 
                 ((Activity)param.thisObject).finish();
                 return;
@@ -290,15 +290,15 @@ public class MainHook implements IXposedHookLoadPackage {
             autoed=true;
             if (data.get("quick").equals("pass")) {
                 data.set("quick", "");
-                openWeb((Context) param.thisObject, "http://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx");
+                openWeb((Context) param.thisObject, Constants.URL_PASS);
             }else if (data.get("quick").equals("x5")) {
                 data.set("quick", "");
-                openWeb((Context) param.thisObject, "http://debugtbs.qq.com/");
+                openWeb((Context) param.thisObject, Constants.X5);
             }else if (data.get("auto").equals("true") || data.get("quick").equals("sig")) {
                 data.set("quick", "");
                 try {
                     XVdLog("主Activity", "OnStart执行");
-                    openWeb((Context) param.thisObject, "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da");
+                    openWeb((Context) param.thisObject, Constants.URL_SIG);
                     XVdLog("主Activity", "OnStart执行完成");
                 } catch (Exception e) {
                     XVdLog("主Activity错误", e.toString());

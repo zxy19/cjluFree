@@ -20,7 +20,7 @@ public class killAppActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kill_app);
-        if(!rootWay() && !shizukuWay()) {
+        if(rootWay() || shizukuWay()) {
             Toast.makeText(this,"已结束进程",Toast.LENGTH_LONG).show();
         }else{
             Intent intent = new Intent();

@@ -1,5 +1,7 @@
 package cc.xypp.cjluFree;
 
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -20,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,39 +50,40 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
             }
         }
         Intent intent = getIntent();
-        String quick = intent.getAction();
+        String quick = intent.getAction(),code="";
         if(quick!=null){
             Log.i("[AS_LOG][APP]INTENT", quick);
             if(quick.equals("cc.xypp.cjluFree.sig")){
-                data.set("quick","sig");
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.sig");
                     finish();
                     return;
+                }else{
+                    data.set("quick",code="sig");
                 }
             }else if(quick.equals("cc.xypp.cjluFree.siga")){
-                data.set("quick","sig");
-                data.set("once_inj","true");
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.siga");
                     finish();
                     return;
+                }else{
+                    data.set("quick",code="sig");
+                    data.set("once_inj","true");
                 }
             }else if(quick.equals("cc.xypp.cjluFree.pass")){
-                data.set("quick","pass");
                 if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
                     startAfterWifi("cc.xypp.cjluFree.pass");
                     finish();
                     return;
+                }else {
+                    data.set("quick", code = "pass");
                 }
             }else quick=null;
 
             if(quick!=null){
-                if(intent.getBooleanExtra("autoStartWifi",false)){
-                    data.set("is_auto_wifi","true");
-                }
-                startWeWork();
+                startWeWork(code);
                 finish();
+                return;
             }
         }
         setContentView(R.layout.activity_main);
@@ -136,17 +140,42 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
         startSelf("cc.xypp.cjluFree.pass");
     }
     public void openX5D(View view){
-        data.set("quick","x5");
-
-        startWeWork();
+        startWeWork("x5");
     }
     public void about(View view){
         Uri uri = Uri.parse("https://freecjlu.xypp.cc/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
-    private void startWeWork() {
-        //Intent intent = getPackageManager().getLaunchIntentForPackage("com.tencent.wework");
+    private String getUrl(String code){
+        switch (code){
+            case "x5":return Constants.X5;
+            case "sig":return Constants.URL_SIG;
+            case "pass":return Constants.URL_PASS;
+            default:return "";
+        }
+    }
+    private void startWeWork(String setCode) {
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(process.getOutputStream());
+            os.write(("am start -n com.tencent.wework/com.tencent.wework.common.web.JsWebActivity -e extra_web_title 自动化页面中间页 -e extra_web_url '"+getUrl(setCode)+"'").getBytes());
+            os.writeBytes("\n");
+            os.flush();
+            os.writeBytes("exit\n");
+            os.flush();
+            os.close();
+            return;
+        } catch (IOException ignore) { }
+        try {
+            Intent intent = new Intent();
+            intent.setClassName("com.tencent.wework", "com.tencent.wework.common.web.JsWebActivity");
+            intent.putExtra("extra_web_title", "自动化页面中间页");
+            intent.putExtra("extra_web_url",getUrl(setCode));
+            startActivity(intent);
+            return;
+        } catch (Exception ignore) { }
+        data.set("quick",setCode);
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setClassName("com.tencent.wework", "com.tencent.wework.launch.LaunchSplashEduActivity");
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -158,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
 
     private void startAfterWifi(String action){
         Intent i = new Intent(this,WifiActivity.class);
-        i.putExtra("act",WifiActivity.ACTION_CLOSE);
+        //i.putExtra("act",WifiActivity.ACTION_CLOSE);
         i.putExtra("afterAction",action);
         startActivity(i);
     }
