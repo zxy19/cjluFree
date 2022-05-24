@@ -11,6 +11,27 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/textView11"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="记录HOOK模块的LOGS。该选项非常消耗性能，一般情况下请不要打开"
+            app:layout_constraintEnd_toStartOf="@+id/button15"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/b_wifi"
+            app:layout_constraintTop_toBottomOf="@+id/b_enlogs" />
+
+        <Switch
+            android:id="@+id/b_enlogs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="optChange"
+            android:tag="enable_log"
+            android:text="记录HOOK模块日志"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_wifi"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+        <TextView
             android:id="@+id/textView9"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -116,11 +137,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="28dp"
             android:text="打卡设置"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <Switch
         android:id="@+id/b_inj"
@@ -161,7 +182,7 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="40dp"
             android:text="通行码设置"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/textView4"
@@ -224,5 +245,16 @@
             app:layout_constraintEnd_toEndOf="@+id/textView6"
             app:layout_constraintStart_toStartOf="@+id/b_auto"
             app:layout_constraintTop_toBottomOf="@+id/b_auto" />
+
+        <Button
+            android:id="@+id/button15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editBtn"
+            android:tag="text/logs"
+            android:text="查看日志"
+            app:layout_constraintBottom_toBottomOf="@+id/textView11"
+            app:layout_constraintEnd_toEndOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/b_enlogs" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

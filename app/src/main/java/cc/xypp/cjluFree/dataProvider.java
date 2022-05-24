@@ -64,6 +64,8 @@ public class dataProvider extends ContentProvider {
         initVal("auto_gold","true");
         initVal("auto_update","true");
         initVal("is_auto_wifi","");
+        initVal("enable_log","false");
+        initVal("logs","");
         return true;
     }
     public void initVal(String name,String val) {

@@ -125,6 +125,7 @@ public class WifiActivity extends AppCompatActivity {
         //if(Build.VERSION.SDK_INT<Build.VERSION_CODES.Q)return false;
         if(Shizuku.pingBinder())
             Shizuku.newProcess(new String[]{"svc","wifi", (open ? "enable" : "disable")},null,null);
+        else return false;
         return true;
     }
 }

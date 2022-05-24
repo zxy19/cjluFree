@@ -24,6 +24,7 @@ public class SettingActivity extends AppCompatActivity {
         ((Switch)findViewById(R.id.b_zoom)).setChecked(data.get("auto_zoom").equals("true"));
         ((Switch)findViewById(R.id.b_gold)).setChecked(data.get("auto_gold").equals("true"));
         ((Switch)findViewById(R.id.b_updatea)).setChecked(data.get("auto_update").equals("true"));
+        ((Switch)findViewById(R.id.b_enlogs)).setChecked(data.get("enable_log").equals("true"));
     }
     public void optChange(View view){
         data.set((String) view.getTag(),((Switch)view).isChecked()?"true":"false");

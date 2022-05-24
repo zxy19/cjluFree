@@ -30,14 +30,19 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class MainHook implements IXposedHookLoadPackage {
-
-    private static final String JUMP_WEB = "https://qywx.cjlu.edu.cn/Pages/Detail.aspx?ID=5986121fe88949c283e1719f595d57da";
     private dataUtil data;
     private final HashSet<String> classNameSet = new HashSet<>();
-    private final boolean enableLog = false;
+    private boolean enableLog = false;
     private void XVdLog(String flg, String content) {
-
         Log.i("[AS_LOG_NORMAL]" + flg, content);
+        if(enableLog){
+            StringBuilder sb=new StringBuilder(data.get("logs"));
+            if(sb.length()>10000){
+                sb.delete(0,1000);
+            }
+            sb.append(flg).append("|").append(content).append("\r\n");
+            data.set("logs",sb.toString());
+        }
     }
     Activity activity;
     Context ctx;
@@ -116,6 +121,7 @@ public class MainHook implements IXposedHookLoadPackage {
                         ContentResolver rsv = applicationContext.getContentResolver();
                         if (rsv == null) return;
                         data = new dataUtil(rsv);
+                        enableLog=data.get("enable_log").equals("true");
                         XVdLog("取得Data", data.get("auto") + "-" + data.get("inj") + "-" + data.get("once"));
                     } catch (Exception e) {
                         XVdLog("取Context错误", e.toString());
@@ -268,14 +274,6 @@ public class MainHook implements IXposedHookLoadPackage {
             if(toExit){
                 toExit=false;
                 started=false;
-//                if(data.get("auto_wifi").equals("true") && data.get("is_auto_wifi").equals("true")){
-//                    Intent i=new Intent("cc.xypp.cjluFree.wifi");
-//                    i.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.WifiActivity");
-//                    i.putExtra("act",WifiActivity.ACTION_OPEN);
-//                    ((Activity)param.thisObject).startActivity(i);
-//                    data.set("is_auto_wifi","false");
-//                }
-
                 ((Activity)param.thisObject).finish();
                 return;
             }
