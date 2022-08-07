@@ -14,10 +14,15 @@
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_icon_sig_back.xml" value="0.146" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_icon_sig_front.xml" value="0.161" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_logo_front.xml" value="0.146" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_widget_bg_default.xml" value="0.33" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_widget_bg_ok.xml" value="0.33" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/drawable/ic_widget_btn_normal.xml" value="0.33" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_agreement.xml" value="0.176" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_kill_app.xml" value="0.1671875" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_main.xml" value="0.22" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_setting.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_main.xml" value="0.4" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_setting.xml" value="0.44788441692466463" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/activity_wifi.xml" value="0.1515625" />
+        <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/layout/widget_sign_reminder.xml" value="0.8" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.146" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.144" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/debugwebview/app/src/main/res/mipmap-anydpi-v26/ic_pass.xml" value="0.144" />

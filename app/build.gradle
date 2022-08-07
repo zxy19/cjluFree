@@ -4,11 +4,12 @@ android {
     compileSdkVersion 32
 
     defaultConfig {
+
         applicationId "cc.xypp.cjluFree"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 14
-        versionName "Alpha 1.6.2"
+        versionCode 20
+        versionName "Alpha 1.9.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -25,6 +25,10 @@ public class SettingActivity extends AppCompatActivity {
         ((Switch)findViewById(R.id.b_gold)).setChecked(data.get("auto_gold").equals("true"));
         ((Switch)findViewById(R.id.b_updatea)).setChecked(data.get("auto_update").equals("true"));
         ((Switch)findViewById(R.id.b_enlogs)).setChecked(data.get("enable_log").equals("true"));
+        ((Switch)findViewById(R.id.b_autoLoca)).setChecked(data.get("autoLocation").equals("true"));
+        ((Switch)findViewById(R.id.b_cache)).setChecked(data.get("use_cache").equals("true"));
+        ((Switch)findViewById(R.id.b_forcePortait)).setChecked(data.get("force_portait").equals("true"));
+        ((Switch)findViewById(R.id.b_forceLocate)).setChecked(data.get("forceLocate").equals("true"));
     }
     public void optChange(View view){
         data.set((String) view.getTag(),((Switch)view).isChecked()?"true":"false");

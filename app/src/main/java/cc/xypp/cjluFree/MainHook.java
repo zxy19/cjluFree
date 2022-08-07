@@ -5,22 +5,32 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Base64InputStream;
+import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.ValueCallback;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -61,7 +71,11 @@ public class MainHook implements IXposedHookLoadPackage {
                 .replace("{{T:goldCode}}",data.get("auto_gold"));
     }
     private String getSigScript(){
-        return data.get("sig_src");
+        String res=data.get("sig_src"),tmp = "";
+        if(data.get("forceLocate").equals("true") && !data.get("autoLocation").equals("true")){
+            tmp = data.get("tmLocate");
+        }
+        return res.replace("{{T:autoLocation}}",data.get("autoLocation")).replace("{{T:forceLocate}}",tmp);
     }
     /**
      * 处理Xposed注入事件
@@ -99,7 +113,22 @@ public class MainHook implements IXposedHookLoadPackage {
         AppHook_functions(lpparam);
         AppHook_classLoader(lpparam);
     }
-
+    private void updateCrs(Context ctx){
+        if (data != null) return;
+        try {
+            Context applicationContext = ctx;
+            if (applicationContext == null) return;
+            ctx=applicationContext;
+            XVdLog("取得Context", applicationContext.toString());
+            ContentResolver rsv = applicationContext.getContentResolver();
+            if (rsv == null) return;
+            data = new dataUtil(rsv);
+            enableLog=data.get("enable_log").equals("true");
+            XVdLog("取得Data", data.get("auto") + "-" + data.get("inj") + "-" + data.get("once"));
+        } catch (Exception e) {
+            XVdLog("取Context错误", e.toString());
+        }
+    }
     /**
      * 全局上下文HOOK
      *
@@ -112,20 +141,7 @@ public class MainHook implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
-                    if (data != null) return;
-                    try {
-                        Context applicationContext = (Context) param.getResult();
-                        if (applicationContext == null) return;
-                        ctx=applicationContext;
-                        XVdLog("取得Context", applicationContext.toString());
-                        ContentResolver rsv = applicationContext.getContentResolver();
-                        if (rsv == null) return;
-                        data = new dataUtil(rsv);
-                        enableLog=data.get("enable_log").equals("true");
-                        XVdLog("取得Data", data.get("auto") + "-" + data.get("inj") + "-" + data.get("once"));
-                    } catch (Exception e) {
-                        XVdLog("取Context错误", e.toString());
-                    }
+                    updateCrs((Context) param.getResult());
                 }
             });
         } catch (Throwable t) {
@@ -191,9 +207,6 @@ public class MainHook implements IXposedHookLoadPackage {
                                     XVdLog("_方法HOOK", "WebView");
                                     XposedBridge.hookAllConstructors(clazz, new WebViewConstructorHooker());
                                     XposedBridge.hookMethod(findMethod(clazz, "setWebViewClient"), new WebviewHook());
-                                }else if(name.contains("com.tencent.wework.launch.LaunchSplashDefaultFragment")) {
-                                    XposedHelpers.findAndHookMethod(clazz, "a",BitmapDrawable.class,boolean.class,String.class,String.class,String.class,new BitmapHooker());
-                                    XVdLog("_方法HOOK", "LaunchSplashDefaultFragment");
                                 }
                             } catch (Exception e) {
                                 XVdLog("HOOK方法错误:LoadClass", e.toString());
@@ -269,6 +282,7 @@ public class MainHook implements IXposedHookLoadPackage {
         @Override
         protected void afterHookedMethod(final XC_MethodHook.MethodHookParam param) throws Throwable {
             super.afterHookedMethod(param);
+            updateCrs((Context) param.thisObject);
             XVdLog("主Activity", "OnStart函数");
             if (data == null) return;
             if(toExit){
@@ -278,7 +292,6 @@ public class MainHook implements IXposedHookLoadPackage {
                 return;
             }
             if (started) {
-//                ((Activity)param.thisObject).finish();
                 return;
             }
             started = true;
@@ -312,7 +325,9 @@ public class MainHook implements IXposedHookLoadPackage {
             if(autoed){
                 toExit=true;
             }
+            hasInj=false;
             activity=((Activity)param.thisObject);
+            XVdLog("JSStart", "ENT");
         }
     }
 
@@ -336,54 +351,96 @@ public class MainHook implements IXposedHookLoadPackage {
                         XVdLog("脚本注入", "ENT");
                         final WebView webview = (WebView) param.args[0];
                         String url=webview.getUrl();
-                        XVdLog("脚本注入判断", webview.getUrl());
-                        if (url.contains("https://qywx.cjlu.edu.cn/Pages/Detail") && !hasInj && (data.get("inj").equals("true") || data.get("once_inj").equals("true"))) {
-                            data.set("once_inj","false");
-                            XVdLog("脚本注入", "确认开始");
-                            webview.evaluateJavascript(getSigScript(), new ValueCallback<String>() {
-                                @Override
-                                public void onReceiveValue(String value) {
-                                    hasInj = true;
-                                    XVdLog("脚本注入", "结束");
-                                }
-                            });
-                        }else if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("inj_pass").equals("true")){
-                            XVdLog("脚本注入", "确认开始");
-                            webview.evaluateJavascript(getPassScript(), new ValueCallback<String>() {
-                                @Override
-                                public void onReceiveValue(String value) {
-                                    XVdLog("脚本注入", "结束");
-                                }
-                            });
-                        }
-                        if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("auto_bright").equals("true")){
+                        if(url.contains("://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("auto_bright").equals("true")){
                             setBright(1.0f);
                         }
-                    }
-                });
-                XVdLog("WebViewHookB", param.args[0].getClass().getName());
-                XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "onPageStarted"), new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        XVdLog("脚本注入P", "ENT");
-                        final WebView webview = (WebView) param.args[0];
-                        String url= (String) param.args[1];
-                        XVdLog("脚本注入判断P", url);
-                        if(url.contains("https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("inj_pass").equals("true")){
-                            XVdLog("脚本注入P", "确认开始");
-                            webview.evaluateJavascript(getPassScript(), new ValueCallback<String>() {
-                                @Override
-                                public void onReceiveValue(String value) {
-                                    XVdLog("脚本注入P", "结束");
-                                }
-                            });
+                        if(url.contains("://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && data.get("force_portait").equals("true")){
+                            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                         }
                     }
                 });
+                XposedBridge.hookMethod(findMethod(param.args[0].getClass(), "shouldInterceptRequest"),new WebviewResHook());
             }
         }
     }
+    //shouldInterceptRequest
+    private class WebviewResHook extends XC_MethodHook {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            try {
+                WebResourceResponse ret = null;
+                WebView targetWebView = (WebView) (param.args[0]);
+                WebResourceRequest request = (WebResourceRequest) (param.args[1]);
+                String url = String.valueOf(request.getUrl());
+                String turl = request.getRequestHeaders().get("Referer");
+                if(turl==null)turl="";
+                XVdLog("WEBVIEW_RES", url + " (in:" + turl + ")");
+                if (data.get("inj_pass").equals("true") && !data.get("im2").equals("") && url.contains("card.png")) {
+                    ret = new WebResourceResponse("image/png", "", new ByteArrayInputStream(new byte[]{}));
+                } else if (data.get("inj_pass").equals("true") && turl.contains("://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx") && url.contains("://qywx.cjlu.edu.cn/resource/js/jeasyui/jquery-1.11.1.min.js")) {
+                    //脚本-通行码
+                    String retStr = data.get("user_jqo");
+                    retStr += getPassScript();
+                    ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream(
+                            retStr.getBytes()
+                    ));
+                } else if ((data.get("inj").equals("true") || data.get("once_inj").equals("true")) && turl.contains("://qywx.cjlu.edu.cn/Pages/Detail") && url.contains("://qywx.cjlu.edu.cn/resource/js/jeasyui/jquery-1.11.1.min.js")) {
+                    //脚本-打卡
+                    String retStr = data.get("user_jqo");
+                    retStr += getSigScript();
+                    ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream(
+                            retStr.getBytes()
+                    ));
+                } else if(url.startsWith("http://cjlufree.xypp.cc/record/")){
+                    data.set("lastSignTs",String.valueOf(new Date().getTime()));
+                    ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream("success".getBytes()));
+                    XVdLog("SIG_FLG","已经点击打卡");
+                    Intent intent = new Intent("cc.xypp.cjlufree.widgetUpdate");
+                    intent.setClassName("cc.xypp.cjluFree","cc.xypp.cjluFree.widget_sign_reminder");
+                    activity.runOnUiThread(()->{
+                        Toast.makeText(activity,"【量大自由】打卡已完成~",Toast.LENGTH_SHORT).show();
+                    });
+                    activity.sendBroadcast(intent);
+                } else if (data.get("use_cache").equals("true")) {
+                    if (url.startsWith("http://cjlufree.xypp.cc/user/")) {
+                        url = url.substring(29);
+                        if (url.contains("?_=")) {
+                            url = url.substring(0, url.indexOf("?_="));
+                        }
+                        url = URLDecoder.decode(url, "UTF-8");
+                        XVdLog("GET_USER", url);
+                        data.set("user_inf", url);
+                        ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream("success".getBytes()));
+                    } else if (url.startsWith("http://cjlufree.xypp.cc/disable/")) {
+                        data.set("use_cache", "false");
+                        ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream("<script>location.href='https://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx'</script>".getBytes()));
+                    } else if (url.contains("://qywx.cjlu.edu.cn/Pages/RuXiao/XSLXM.aspx")) {
+                        String[] userInf = data.get("user_inf").split("\\|");
+                        if (userInf.length >= 4)
+                            ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream(
+                                    data.get("user_page")
+                                            .replace("{{T:uname}}", userInf[0])
+                                            .replace("{{T:uxh}}", userInf[1])
+                                            .replace("{{T:uxy}}", userInf[2])
+                                            .replace("{{T:ubj}}", userInf[3])
+                                            .replace("{{T:inj}}", data.get("inj_pass"))
+                                            .getBytes()
+                            ));
+                    } else if (url.startsWith("http://qywx.cjlu.edu.cn/Pages/RuXiao/jq_qinjIf.js")) {
+                        String retStr = data.get("user_jq");
+                        if (data.get("inj_pass").equals("true")) retStr = getPassScript() + retStr;
+                        ret = new WebResourceResponse("text/html", "UTF-8", new ByteArrayInputStream(
+                                retStr.getBytes()
+                        ));
+                    }
+                }
 
+                if (ret != null) param.setResult(ret);
+            }catch (Exception e){
+                XVdLog("WEBVIEWRESERR", e.toString());
+            }
+        }
+    }
     private class WebViewConstructorHooker extends XC_MethodHook{
         @Override
         protected void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
@@ -399,24 +456,6 @@ public class MainHook implements IXposedHookLoadPackage {
                         param.args[0] = true;
                     }
                 });
-            }
-        }
-    }
-    private class BitmapHooker extends XC_MethodHook{
-        @Override
-        protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param){
-            XVdLog("LaunchSplashDefaultFragment", "命中");
-            try {
-                String varContent = data.get("im_l");
-                if (varContent.startsWith("data:image/")) {
-                    XVdLog("LaunchSplashDefaultFragment", "替换");
-                    varContent = varContent.substring(varContent.indexOf("base64,") + 7);
-                    byte[] imgDat = Base64.decode(varContent, Base64.DEFAULT);
-                    Bitmap bm = BitmapFactory.decodeByteArray(imgDat, 0, imgDat.length);
-                    param.args[0] = new BitmapDrawable(ctx.getResources(), bm);
-                }
-            }catch (Exception e){
-                XVdLog("LaunchSplashDefaultFragment错误", e.toString());
             }
         }
     }
