@@ -10,6 +10,83 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/button17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:onClick="editBtn"
+            android:tag="text/tmLocate"
+            android:text="配置“强制使用位置”"
+            app:layout_constraintStart_toEndOf="@+id/button6"
+            app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="该选项可以将您的位置自动填写为您指定的位置"
+            app:layout_constraintEnd_toEndOf="@+id/textView6"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/b_auto"
+            app:layout_constraintTop_toBottomOf="@+id/b_forceLocate" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="警告：【本功能与“自动确认位置”冲突。若开启了前者则本选项无效】本功能暂无经过严格的测试证明可行，请谨慎使用。不正确的运用可能会为您引来不必要的纠纷甚至对您的个人安全和生活造成困扰，如非必要请勿使用该功能。您配置的位置应当和原先界面中显示的位置完全一致"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/textView6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/b_auto"
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+        <Switch
+            android:id="@+id/b_forceLocate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="optChange"
+            android:tag="forceLocate"
+            android:text="【不推荐】强制使用位置"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_inj"
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+        <Switch
+            android:id="@+id/b_forcePortait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="optChange"
+            android:tag="force_portait"
+            android:text="强制竖屏"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_bright"
+            app:layout_constraintTop_toBottomOf="@+id/b_bright" />
+
+        <Switch
+            android:id="@+id/b_cache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="optChange"
+            android:tag="use_cache"
+            android:text="使用内置文件缓存加载"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_zoom"
+            app:layout_constraintTop_toBottomOf="@+id/b_gold" />
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="该选项可以根据定位位置自动确认您是否在校内，并自动选择选项"
+            app:layout_constraintEnd_toEndOf="@+id/textView6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/b_auto"
+            app:layout_constraintTop_toBottomOf="@+id/b_autoLoca" />
+
         <TextView
             android:id="@+id/textView11"
             android:layout_width="0dp"
@@ -68,13 +145,13 @@
             android:id="@+id/b_zoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="8dp"
             android:onClick="optChange"
             android:tag="auto_zoom"
             android:text="放大二维码（优化扫描）"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintStart_toStartOf="@+id/b_inj_pass"
-            app:layout_constraintTop_toBottomOf="@+id/b_bright" />
+            app:layout_constraintTop_toBottomOf="@+id/b_forcePortait" />
 
         <Switch
             android:id="@+id/b_wifi"
@@ -112,25 +189,25 @@
             app:layout_constraintStart_toStartOf="@+id/button9"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="editBtn"
-        android:tag="image/im3"
-        android:text="头像图"
-        app:layout_constraintStart_toEndOf="@+id/button7"
-        app:layout_constraintTop_toTopOf="@+id/button5" />
+        <Button
+            android:id="@+id/button8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editBtn"
+            android:tag="image/im3"
+            android:text="头像图"
+            app:layout_constraintStart_toEndOf="@+id/button7"
+            app:layout_constraintTop_toTopOf="@+id/button5" />
 
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="editBtn"
-        android:tag="image/im2"
-        android:text="卡片底图"
-        app:layout_constraintStart_toEndOf="@+id/button5"
-        app:layout_constraintTop_toTopOf="@+id/button5" />
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editBtn"
+            android:tag="image/im2"
+            android:text="卡片底图"
+            app:layout_constraintStart_toEndOf="@+id/button5"
+            app:layout_constraintTop_toTopOf="@+id/button5" />
 
         <TextView
             android:id="@+id/textView4"
@@ -144,39 +221,51 @@
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <Switch
-        android:id="@+id/b_inj"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="optChange"
-        android:tag="inj"
-        android:text="注入自动化脚本"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            android:id="@+id/b_inj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="optChange"
+            android:tag="inj"
+            android:text="注入自动化脚本"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-    <Switch
-        android:id="@+id/b_auto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="optChange"
-        android:tag="auto"
-        android:text="启动时打开打卡页（全自动）"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toStartOf="@+id/b_inj"
-        app:layout_constraintTop_toBottomOf="@+id/b_inj" />
+        <Switch
+            android:id="@+id/b_autoLoca"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="optChange"
+            android:tag="autoLocation"
+            android:text="自动确认位置"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_inj"
+            app:layout_constraintTop_toBottomOf="@+id/b_inj" />
+
+        <Switch
+            android:id="@+id/b_auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="optChange"
+            android:tag="auto"
+            android:text="启动时打开打卡页（全自动）"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="@+id/b_inj"
+            app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
         <Button
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:onClick="editBtn"
             android:tag="image/im1"
             android:text="大底图"
             app:layout_constraintStart_toStartOf="@+id/textView3"
-            app:layout_constraintTop_toBottomOf="@+id/b_gold" />
+            app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
         <TextView
             android:id="@+id/textView3"
@@ -189,25 +278,24 @@
             app:layout_constraintTop_toBottomOf="@+id/button6" />
 
         <Button
-        android:id="@+id/button9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="editBtn"
-        android:tag="text/pass_src"
-        android:text="脚本模板"
-        app:layout_constraintStart_toStartOf="@+id/button5"
-        app:layout_constraintTop_toBottomOf="@+id/button5" />
+            android:id="@+id/button9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editBtn"
+            android:tag="text/pass_src"
+            android:text="脚本模板"
+            app:layout_constraintStart_toStartOf="@+id/button5"
+            app:layout_constraintTop_toBottomOf="@+id/button5" />
 
         <Button
             android:id="@+id/button6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:onClick="editBtn"
             android:tag="text/sig_src"
             android:text="脚本模板"
             app:layout_constraintStart_toStartOf="@+id/b_auto"
-            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+            app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
         <TextView
             android:id="@+id/textView5"
@@ -219,13 +307,13 @@
             app:layout_constraintTop_toBottomOf="@+id/button9" />
 
         <TextView
-        android:id="@+id/textView6"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="该选项用于在有内网wifi的情况下，自动关闭wifi来防止内网打不开相关页面。控制方式会在原生，Root，Shizuku，弹窗中依次降级选择"
-        app:layout_constraintEnd_toEndOf="@+id/b_wifi"
-        app:layout_constraintStart_toStartOf="@+id/b_wifi"
-        app:layout_constraintTop_toBottomOf="@+id/b_wifi" />
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="该选项用于在有内网wifi的情况下，自动关闭wifi来防止内网打不开相关页面。控制方式会在原生，Root，Shizuku，弹窗中依次降级选择"
+            app:layout_constraintEnd_toEndOf="@+id/b_wifi"
+            app:layout_constraintStart_toStartOf="@+id/b_wifi"
+            app:layout_constraintTop_toBottomOf="@+id/b_wifi" />
 
         <TextView
             android:id="@+id/textView7"
@@ -243,6 +331,7 @@
             android:layout_height="wrap_content"
             android:text="该选项用于在唤起企业微信时直达打卡页，并在退出页面后直接退出企业微信，即将企业微信改为打卡器。您可以同时使用通行码快捷方式打开通行码"
             app:layout_constraintEnd_toEndOf="@+id/textView6"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/b_auto"
             app:layout_constraintTop_toBottomOf="@+id/b_auto" />
 
@@ -256,5 +345,23 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView11"
             app:layout_constraintEnd_toEndOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@+id/b_enlogs" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="306dp"
+            android:layout_height="wrap_content"
+            android:text="该选项将使企业微信不再加载通行码页面而是本地生成二维码。该功能仅应当用于扫码，当门卫检查二维码时，您应该关闭该功能并检查二维码状态"
+            app:layout_constraintStart_toStartOf="@+id/b_cache"
+            app:layout_constraintTop_toBottomOf="@+id/b_cache" />
+
+        <Button
+            android:id="@+id/button16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editBtn"
+            android:tag="text/user_inf"
+            android:text="用户数据串"
+            app:layout_constraintStart_toEndOf="@+id/button9"
+            app:layout_constraintTop_toBottomOf="@+id/button8" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -11,6 +11,20 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".widget_sign_reminder"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="cc.xypp.cjlufree.widgetUpdate" />
+                <action android:name="cc.xypp.cjlufree.widgetClick" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sign_reminder_info" />
+        </receiver>
+
         <activity
             android:name=".killAppActivity"
             android:exported="false" />

@@ -66,6 +66,16 @@ public class dataProvider extends ContentProvider {
         initVal("is_auto_wifi","");
         initVal("enable_log","false");
         initVal("logs","");
+        initVal("autoLocation","true");
+        initVal("use_cache","false");
+        initVal("user_page","");
+        initVal("user_jq","");
+        initVal("user_jqo","");
+        initVal("user_inf","");
+        initVal("force_portait","");
+        initVal("lastSignTs","");
+        initVal("tmLocate","");
+        initVal("forceLocate","");
         return true;
     }
     public void initVal(String name,String val) {

@@ -9,4 +9,6 @@
     <string name="pass_n">量大通行码</string>
     <string name="pass_b">--</string>
     <string name="pass">pass</string>
+    <string name="add_widget">量大健康打卡</string>
+    <string name="app_widget_description">量大自由-每日打卡快捷方式</string>
 </resources>

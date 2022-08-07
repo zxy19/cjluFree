@@ -1,39 +1,47 @@
 package cc.xypp.cjluFree;
 
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-import de.robv.android.xposed.XSharedPreferences;
-import cc.xypp.cjluFree.R;
-import rikka.shizuku.*;
+import rikka.shizuku.Shizuku;
 
 public class MainActivity extends AppCompatActivity implements Shizuku.OnRequestPermissionResultListener{
     dataUtil data;
+    private void updateRes(String assName,String stoName,AssetManager accMgr){
+        if(data.get(stoName).equals("") || data.get("auto_update").equals("true"))
+            try {
+                InputStream is = accMgr.open(assName);
+                if(is.available()!=0) {
+                    byte[] t = new byte[is.available()];
+                    is.read(t);
+                    String res = new String(t);
+                    if (!TextUtils.isEmpty(res)) {
+                        data.set(stoName, res);
+                    }
+                }
+                is.close();
+            } catch (Exception e) {
+                XVdLog("merr", e.toString());
+            }
+    }
     @SuppressLint("BlockedPrivateApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,32 +61,39 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
         String quick = intent.getAction(),code="";
         if(quick!=null){
             Log.i("[AS_LOG][APP]INTENT", quick);
-            if(quick.equals("cc.xypp.cjluFree.sig")){
-                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
-                    startAfterWifi("cc.xypp.cjluFree.sig");
-                    finish();
-                    return;
-                }else{
-                    data.set("quick",code="sig");
-                }
-            }else if(quick.equals("cc.xypp.cjluFree.siga")){
-                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
-                    startAfterWifi("cc.xypp.cjluFree.siga");
-                    finish();
-                    return;
-                }else{
-                    data.set("quick",code="sig");
-                    data.set("once_inj","true");
-                }
-            }else if(quick.equals("cc.xypp.cjluFree.pass")){
-                if(intent.getBooleanExtra("wifi",true) && data.get("auto_wifi").equals("true")){
-                    startAfterWifi("cc.xypp.cjluFree.pass");
-                    finish();
-                    return;
-                }else {
-                    data.set("quick", code = "pass");
-                }
-            }else quick=null;
+            switch (quick) {
+                case "cc.xypp.cjluFree.sig":
+                    if (intent.getBooleanExtra("wifi", true) && data.get("auto_wifi").equals("true")) {
+                        startAfterWifi("cc.xypp.cjluFree.sig");
+                        finish();
+                        return;
+                    } else {
+                        data.set("quick", code = "sig");
+                    }
+                    break;
+                case "cc.xypp.cjluFree.siga":
+                    if (intent.getBooleanExtra("wifi", true) && data.get("auto_wifi").equals("true")) {
+                        startAfterWifi("cc.xypp.cjluFree.siga");
+                        finish();
+                        return;
+                    } else {
+                        data.set("quick", code = "sig");
+                        data.set("once_inj", "true");
+                    }
+                    break;
+                case "cc.xypp.cjluFree.pass":
+                    if (intent.getBooleanExtra("wifi", true) && data.get("auto_wifi").equals("true")) {
+                        startAfterWifi("cc.xypp.cjluFree.pass");
+                        finish();
+                        return;
+                    } else {
+                        data.set("quick", code = "pass");
+                    }
+                    break;
+                default:
+                    quick = null;
+                    break;
+            }
 
             if(quick!=null){
                 startWeWork(code);
@@ -90,42 +105,27 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
 
         AssetManager accMgr = getResources().getAssets();
         try {
-            if(data.get("pass_src").equals("") || data.get("auto_update").equals("true"))
-            try {
-                InputStream is = accMgr.open("pass.js");
-                if(is.available()!=0) {
-                    byte[] t = new byte[is.available()];
-                    is.read(t);
-                    String res = new String(t);
-                    if (!TextUtils.isEmpty(res)) {
-                        data.set("pass_src", res);
-                    }
-                }
-                is.close();
-            } catch (Exception e) {
-                XVdLog("merr", e.toString());
-            }
-            if(data.get("sig_src").equals("") || data.get("auto_update").equals("true"))
-            try {
-                InputStream is = accMgr.open("sig.js");
-                if(is.available()!=0) {
-                    byte[] t = new byte[is.available()];
-                    is.read(t);
-                    String res = new String(t);
-                    if (!TextUtils.isEmpty(res)) {
-                        data.set("sig_src", res);
-                    }
-                }
-                is.close();
-            } catch (Exception e) {
-                XVdLog("merr", e.toString());
-            }
+            updateRes("pass.js","pass_src",accMgr);
+            updateRes("sig.js","sig_src",accMgr);
+            updateRes("usr.html","user_page",accMgr);
+            updateRes("jq_qinjIf.js","user_jq",accMgr);
+            updateRes("jquery-1.11.1.min.js","user_jqo",accMgr);
         }catch (Exception e){
             XVdLog("merrg", e.toString());
         }
-        //accMgr.close();
 
-        //startWeWork();
+
+    }
+    protected void onStart() {
+        super.onStart();
+        String lstSigTs = data.get("lastSignTs");
+        System.out.println("[AS_LOG]MAIN-rec:"+lstSigTs);
+        if(lstSigTs.equals(""))lstSigTs="0";
+        long ts = Long.parseLong(lstSigTs);
+        Date ltdat = new Date(ts);
+        ((TextView)findViewById(R.id.text_sign_rec)).setText(
+                new SimpleDateFormat("上次打卡：yyyy年MM月dd日 HH:mm:ss", Locale.CHINA).format(ltdat)
+        );
     }
     public void setting(View view){
         startActivity(new Intent(view.getContext(), SettingActivity.class));
@@ -175,11 +175,15 @@ public class MainActivity extends AppCompatActivity implements Shizuku.OnRequest
             startActivity(intent);
             return;
         } catch (Exception ignore) { }
-        data.set("quick",setCode);
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setClassName("com.tencent.wework", "com.tencent.wework.launch.LaunchSplashEduActivity");
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        startActivity(intent);
+        try {
+            data.set("quick",setCode);
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.tencent.wework", "com.tencent.wework.launch.LaunchSplashEduActivity");
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            startActivity(intent);
+            return;
+        }catch (Exception ignore){}
+        runOnUiThread(()-> Toast.makeText(this,"未安装企业微信，请先安装。",Toast.LENGTH_LONG).show());
     }
     private void XVdLog(String flg, String content) {
         Log.i("[AS_LOG]" + flg, content);

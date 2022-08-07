@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="Widget.CjluFree.AppWidget.Container" parent="android:Widget">
+        <item name="android:padding">?attr/appWidgetPadding</item>
+        <item name="android:background">@drawable/ic_widget_bg_default</item>
+        <item name="android:clipToOutline">true</item>
+    </style>
+</resources>

