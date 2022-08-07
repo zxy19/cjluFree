@@ -57,7 +57,7 @@
 - B.XPatch/Lspatch
 
   安装量大自由软件，将企业微信在您的虚拟框架中进行修补。重启企业微信一般即可生效
-  > 关于Lspatch使用可以参考(这个仓库)[https://github.com/ZWolken/cjluFree],感谢 @ZWolken
+  > 关于Lspatch使用可以参考[这个仓库](https://github.com/ZWolken/cjluFree),感谢 [@ZWolken](https://github.com/ZWolken)
 
 - C.ROOT(仅快捷方式，配合A/B使用全部功能)
 
